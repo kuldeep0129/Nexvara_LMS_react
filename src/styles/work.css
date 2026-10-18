@@ -1,0 +1,863 @@
+
+/* =========================================
+   NEXVARA — WORK & REVIEWS
+   Premium showcase + glass review slider
+========================================= */
+
+/* ---------- SECTION BACKGROUND ---------- */
+
+.work-section {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.work-section::before,
+.work-section::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.16;
+}
+
+.work-section::before {
+  width: 300px;
+  height: 300px;
+  top: 12%;
+  left: -180px;
+  background: #7c5cff;
+}
+
+.work-section::after {
+  width: 280px;
+  height: 280px;
+  right: -160px;
+  bottom: 8%;
+  background: #38bdf8;
+}
+
+.work-wrap {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+/* =========================================
+   PROJECT SHOWCASE
+========================================= */
+
+.work-shots {
+  align-items: stretch;
+  margin-top: 38px;
+}
+
+.work-shot {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  border-radius: 22px;
+  background: var(--surface, rgba(255, 255, 255, 0.035));
+  transition:
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.work-shot:hover {
+  transform: translateY(-7px);
+  border-color: color-mix(in srgb, var(--c, #8b5cf6) 48%, transparent);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.16);
+}
+
+.work-shot-visual {
+  position: relative;
+  min-height: 205px;
+  padding: 15px 16px 19px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      circle at 80% 15%,
+      color-mix(in srgb, var(--c, #8b5cf6) 24%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--c, #8b5cf6) 11%, #111827),
+      #111827 75%
+    );
+}
+
+.work-shot-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.work-window-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.work-window-dots i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.work-window-dots i:first-child {
+  background: #fb7185;
+}
+
+.work-window-dots i:nth-child(2) {
+  background: #fbbf24;
+}
+
+.work-window-dots i:nth-child(3) {
+  background: #34d399;
+}
+
+.work-preview-label {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.61rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+}
+
+.work-mock {
+  position: relative;
+  z-index: 1;
+  min-height: 125px;
+}
+
+.work-mock .bar {
+  height: 7px;
+  margin-bottom: 13px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.work-mock .box {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 9px;
+  height: 94px;
+  padding: 10px 12px 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.work-mock .box:not(.rows) i {
+  display: block;
+  flex: 1;
+  max-width: 24px;
+  min-height: 4px;
+  border-radius: 5px 5px 0 0;
+  background: var(--c, #8b5cf6);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--c, #8b5cf6) 30%, transparent);
+}
+
+.work-mock .box.rows {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 11px;
+  height: 94px;
+  padding: 13px;
+}
+
+.work-mock .box.rows i {
+  display: block;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+.work-orb {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.work-orb-one {
+  width: 145px;
+  height: 145px;
+  top: 30px;
+  right: -65px;
+}
+
+.work-orb-two {
+  width: 95px;
+  height: 95px;
+  top: 55px;
+  right: -40px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.work-shot-body {
+  position: relative;
+  padding: 21px 20px 19px;
+}
+
+.work-shot-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.work-project-index {
+  color: var(--c, #8b5cf6);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.work-shot-heading h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.04rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.work-arrow {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  border-radius: 50%;
+  opacity: 0.7;
+  transition:
+    transform 250ms ease,
+    background 250ms ease,
+    opacity 250ms ease;
+}
+
+.work-arrow svg {
+  width: 14px;
+  height: 14px;
+}
+
+.work-shot:hover .work-arrow {
+  transform: rotate(-35deg);
+  opacity: 1;
+  background: color-mix(in srgb, var(--c, #8b5cf6) 17%, transparent);
+}
+
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.work-tag {
+  padding: 5px 9px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  border-radius: 7px;
+  font-size: 0.69rem;
+  line-height: 1.4;
+}
+
+.work-project-caption {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+/* =========================================
+   REVIEWS HEADER
+========================================= */
+
+.work-reviews-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: clamp(70px, 9vw, 112px);
+  margin-bottom: 26px;
+}
+
+.work-reviews-title {
+  max-width: 660px;
+}
+
+.work-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  line-height: 1.5;
+}
+
+.work-live-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.55);
+}
+
+.work-reviews-title h3,
+.work-achievements-heading h3 {
+  margin: 12px 0 0;
+  font-size: clamp(1.7rem, 3.2vw, 2.65rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+
+.work-reviews-title p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+.work-review-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 9px;
+}
+
+.work-review-controls button {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.14));
+  border-radius: 50%;
+  background: var(--surface, rgba(255, 255, 255, 0.045));
+  color: var(--text, inherit);
+  cursor: pointer;
+  transition:
+    transform 250ms ease,
+    background 250ms ease,
+    border-color 250ms ease;
+}
+
+.work-review-controls button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139, 92, 246, 0.65);
+  background: rgba(139, 92, 246, 0.13);
+}
+
+.work-review-controls button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.work-review-controls .rev svg {
+  transform: rotate(180deg);
+}
+
+/* =========================================
+   GLASS REVIEW SLIDER
+   Scrollbar hidden, swipe still enabled
+========================================= */
+
+.work-review-shell {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 5px 0 0;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+.work-review-track {
+  display: grid;
+  grid-auto-columns: calc((100% - 44px) / 3);
+  grid-auto-flow: column;
+  gap: 22px;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 7px 2px 20px;
+
+  box-sizing: border-box;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Chrome, Edge, Safari and Chromium browsers */
+.work-review-track::-webkit-scrollbar,
+.work-review-track::-webkit-scrollbar-track,
+.work-review-track::-webkit-scrollbar-thumb,
+.work-review-track::-webkit-scrollbar-button,
+.work-review-track::-webkit-scrollbar-corner {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  -webkit-appearance: none !important;
+}
+
+.work-review-track:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.7);
+  outline-offset: -2px;
+  border-radius: 16px;
+}
+
+/* Review glass card */
+
+.work-review-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 285px;
+  margin: 0;
+  padding: 24px;
+
+  overflow: hidden;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 23px;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(139, 92, 246, 0.12),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.095),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  transition:
+    transform 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.work-review-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(167, 139, 250, 0.7),
+    transparent
+  );
+
+  opacity: 0.65;
+}
+
+.work-review-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(167, 139, 250, 0.38);
+
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.work-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.work-quote-mark {
+  height: 42px;
+  color: #a78bfa;
+  font-family: Georgia, serif;
+  font-size: 4.2rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.work-review-card .stars {
+  display: flex;
+  gap: 3px;
+  color: #fbbf24;
+}
+
+.work-review-card .stars svg {
+  width: 14px;
+  height: 14px;
+}
+
+.work-review-card q {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  margin: 0 0 26px;
+
+  color: var(--text, inherit);
+  font-size: 0.94rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.work-review-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin-top: auto;
+  padding-top: 17px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.work-review-avatar {
+  display: grid;
+  width: 43px !important;
+  height: 43px !important;
+  flex-shrink: 0;
+  place-items: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  font-size: 0.82rem !important;
+  font-weight: 800;
+}
+
+.work-review-identity {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.work-review-identity b {
+  overflow: hidden;
+  font-size: 0.88rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-review-identity small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 6px 8px;
+
+  border: 1px solid rgba(52, 211, 153, 0.19);
+  border-radius: 8px;
+  background: rgba(52, 211, 153, 0.07);
+  color: #34d399;
+
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.work-review-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Progress bar below the slider */
+
+.work-slider-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 2px;
+}
+
+.work-slider-progress {
+  position: relative;
+  height: 3px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--line, rgba(255, 255, 255, 0.12));
+}
+
+.work-slider-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+  transition: width 350ms ease;
+}
+
+.work-slider-count {
+  color: var(--text, inherit);
+  font-size: 0.72rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.work-slider-count span {
+  margin: 0 3px;
+  color: var(--muted);
+}
+
+/* =========================================
+   ACHIEVEMENTS
+========================================= */
+
+.work-achievements-heading {
+  margin-top: clamp(65px, 8vw, 100px);
+  margin-bottom: 24px;
+}
+
+.work-achievements-heading h3 {
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+}
+
+.work-achievements {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.work-achievements > * {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 17px;
+
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.11));
+  border-radius: 15px;
+  background: var(--surface, rgba(255, 255, 255, 0.035));
+
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.55;
+
+  transition:
+    transform 250ms ease,
+    border-color 250ms ease,
+    background 250ms ease;
+}
+
+.work-achievements > *:hover {
+  transform: translateY(-3px);
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.work-achievement-icon {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  place-items: center;
+
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 11px;
+  background: rgba(139, 92, 246, 0.09);
+  color: #a78bfa;
+}
+
+.work-achievement-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+  .work-review-track {
+    grid-auto-columns: calc((100% - 22px) / 2);
+  }
+
+  .work-achievements {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .work-reviews-heading {
+    align-items: flex-end;
+    gap: 14px;
+    margin-top: 65px;
+    margin-bottom: 21px;
+  }
+
+  .work-reviews-title h3 {
+    font-size: clamp(1.55rem, 6vw, 2rem);
+  }
+
+  .work-reviews-title p {
+    font-size: 0.85rem;
+  }
+
+  .work-review-controls {
+    gap: 6px;
+  }
+
+  .work-review-controls button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .work-review-track {
+    grid-auto-columns: 86%;
+    gap: 14px;
+    padding-bottom: 16px;
+  }
+
+  .work-review-card {
+    min-height: 270px;
+    padding: 21px;
+    border-radius: 20px;
+  }
+
+  .work-review-card q {
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+
+  .work-achievements {
+    gap: 10px;
+  }
+
+  .work-achievements > * {
+    padding: 13px 11px;
+    gap: 9px;
+    font-size: 0.76rem;
+  }
+
+  .work-achievement-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+}
+
+@media (max-width: 440px) {
+  .work-reviews-heading {
+    align-items: flex-start;
+  }
+
+  .work-review-controls {
+    padding-top: 8px;
+  }
+
+  .work-review-controls button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .work-review-track {
+    grid-auto-columns: 92%;
+    gap: 12px;
+  }
+
+  .work-review-card {
+    min-height: 285px;
+    padding: 18px;
+  }
+
+  .work-review-person {
+    gap: 9px;
+  }
+
+  .work-review-badge {
+    padding: 5px 6px;
+    font-size: 0.6rem;
+  }
+
+  .work-achievements {
+    grid-template-columns: 1fr;
+  }
+
+  .work-achievements > * {
+    padding: 13px 15px;
+  }
+
+  .work-shot-visual {
+    min-height: 185px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .work-shot,
+  .work-arrow,
+  .work-review-card,
+  .work-review-controls button,
+  .work-achievements > * {
+    transition: none;
+  }
+
+  .work-review-track {
+    scroll-behavior: auto;
+  }
+}

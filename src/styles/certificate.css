@@ -1,0 +1,6 @@
+/* Certificate: brand logo (top right) + director signature above the line */
+.cert-logo{position:absolute;top:clamp(20px,2.7vw,20px);left:clamp(15px,3.0vw,20px);z-index:2;height:clamp(26px,5vw,44px);width:auto;max-width:20%;object-fit:contain;pointer-events:none}
+.cert-in{padding-top:clamp(26px,4vw,34px)}
+.cert-f .sig-wrap{display:flex;flex-direction:column;align-items:flex-start}
+.cert-f .sig-img{display:block;height:clamp(32px,6vw,50px);width:auto;max-width:130px;object-fit:contain;margin:0 0 -4px 4px;position:relative;z-index:1;mix-blend-mode:multiply}
+.cert-f .sig-wrap .sig{align-self:stretch}

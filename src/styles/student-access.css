@@ -1,0 +1,1001 @@
+/* =========================================
+   STUDENT ACCESS MODAL — NEXVARA
+========================================= */
+
+.sa-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+
+  display: grid;
+  place-items: center;
+
+  padding: 22px;
+  overflow: hidden;
+
+  background: rgba(10, 8, 27, 0.76);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* Main modal */
+
+.sa-dialog {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+
+  width: min(940px, 100%);
+  height: min(760px, calc(100dvh - 44px));
+  max-height: calc(100dvh - 44px);
+  min-height: 0;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 26px;
+
+  background: #fff;
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================================
+   RED CLOSE BUTTON
+========================================= */
+
+.sa-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+
+  border: 1px solid #fecaca;
+  border-radius: 50%;
+
+  background: #fff1f2;
+  color: #dc2626;
+
+  font-size: 25px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sa-close:hover {
+  border-color: #dc2626;
+  background: #dc2626;
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.sa-close:focus-visible {
+  outline: 3px solid rgba(220, 38, 38, 0.25);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   LEFT SHOWCASE PANEL
+========================================= */
+
+.sa-showcase {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+
+  min-width: 0;
+  min-height: 0;
+  padding: 34px;
+
+  overflow: hidden;
+
+  color: #fff;
+
+  background:
+    radial-gradient(
+      ellipse at 12% 8%,
+      rgba(85, 231, 237, 0.25),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 90% 80%,
+      rgba(139, 92, 246, 0.55),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #111126,
+      #28204d 60%,
+      #19172f
+    );
+}
+
+.sa-showcase::before,
+.sa-showcase::after {
+  position: absolute;
+  content: "";
+
+  width: 280px;
+  height: 280px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.sa-showcase::before {
+  top: 20%;
+  right: -150px;
+
+  box-shadow:
+    0 0 0 25px rgba(255, 255, 255, 0.025),
+    0 0 0 55px rgba(255, 255, 255, 0.025);
+
+  animation: saFloat 9s ease-in-out infinite;
+}
+
+.sa-showcase::after {
+  bottom: -190px;
+  left: -100px;
+}
+
+/* Nexvara branding */
+
+.sa-brand {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 0;
+
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+}
+
+.sa-brand > span {
+  min-width: 0;
+}
+
+.sa-brand b {
+  color: #70e9e7;
+}
+
+.sa-brand-logo {
+  display: block;
+  flex: 0 0 auto;
+
+  width: 44px;
+  height: 44px;
+
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* Showcase copy */
+
+.sa-showcase-copy {
+  position: relative;
+  z-index: 1;
+
+  margin: auto 0;
+}
+
+.sa-kicker,
+.sa-eyebrow {
+  color: #7352d5;
+
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.sa-kicker {
+  color: #8ff1ec;
+}
+
+.sa-showcase-copy h2 {
+  margin: 18px 0 14px;
+
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+.sa-showcase-copy h2 em {
+  color: #91efec;
+  font-style: normal;
+}
+
+.sa-showcase-copy p {
+  max-width: 310px;
+  margin: 0;
+
+  color: #d1cde7;
+
+  font-size: 0.91rem;
+  line-height: 1.75;
+}
+
+/* Showcase features */
+
+.sa-feature {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 13px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.sa-feature > span {
+  display: grid;
+  flex: 0 0 36px;
+
+  width: 36px;
+  height: 36px;
+  place-items: center;
+
+  border-radius: 12px;
+
+  background: rgba(143, 241, 236, 0.15);
+  color: #8ff1ec;
+
+  font-size: 19px;
+}
+
+.sa-feature b,
+.sa-feature small {
+  display: block;
+}
+
+.sa-feature b {
+  font-size: 0.82rem;
+}
+
+.sa-feature small {
+  margin-top: 5px;
+  color: #c7c1df;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+/* =========================================
+   RIGHT FORM PANEL
+========================================= */
+
+.sa-form-side {
+  align-self: stretch;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+
+  padding: 38px clamp(24px, 3.5vw, 44px);
+
+  background: #fff;
+
+  scrollbar-width: thin;
+  scrollbar-color: #c7b8f4 transparent;
+}
+
+.sa-form-side::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sa-form-side::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sa-form-side::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #c7b8f4;
+}
+
+/*
+  Login:
+  Keep the normal login form from scrolling.
+  Compact spacing helps it fit in the modal.
+*/
+
+.sa-dialog--login .sa-form-side {
+  overflow: hidden;
+}
+
+.sa-dialog--login .sa-form {
+  gap: 12px;
+  margin-top: 18px;
+}
+
+/*
+  Registration:
+  Only the form panel scrolls when content is taller.
+*/
+
+.sa-dialog--register .sa-form-side,
+.sa-dialog--forgot .sa-form-side {
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Heading */
+
+.sa-form-side h1 {
+  margin: 10px 0 7px;
+  padding-right: 34px;
+
+  color: #201b35;
+
+  font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+
+.sa-subtitle {
+  margin: 0 0 20px;
+
+  color: #777187;
+
+  font-size: 0.87rem;
+  line-height: 1.6;
+}
+
+/* =========================================
+   LOGIN / REGISTER TABS
+========================================= */
+
+.sa-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+
+  flex: 0 0 auto;
+
+  padding: 5px;
+  border-radius: 12px;
+
+  background: #f3f0fa;
+}
+
+.sa-tabs button {
+  min-width: 0;
+  padding: 10px 7px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #777187;
+
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sa-tabs button:hover {
+  color: #603bc1;
+}
+
+.sa-tabs button.active {
+  background: #fff;
+  color: #603bc1;
+
+  box-shadow: 0 3px 12px rgba(37, 22, 80, 0.08);
+}
+
+.sa-tabs button:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* =========================================
+   FORM FIELDS
+========================================= */
+
+.sa-form {
+  display: grid;
+  flex: 0 0 auto;
+
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.sa-form > label {
+  display: grid;
+  gap: 7px;
+
+  min-width: 0;
+
+  color: #39324c;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.sa-form input:not([type="checkbox"]) {
+  box-sizing: border-box;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #e4e0ee;
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #fff;
+  color: #201b35;
+
+  font: inherit;
+  font-size: 0.86rem;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sa-form input:not([type="checkbox"]):hover {
+  border-color: #c9bee8;
+}
+
+.sa-form input:not([type="checkbox"]):focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.sa-form input::placeholder {
+  color: #a29caf;
+  opacity: 1;
+}
+
+/* Password field */
+
+.sa-password {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+  padding-right: 8px;
+
+  border: 1px solid #e4e0ee;
+  border-radius: 10px;
+
+  background: #fff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sa-password:focus-within {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.sa-password input:not([type="checkbox"]) {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.sa-password input:not([type="checkbox"]):focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.sa-password button,
+.sa-forgot,
+.sa-back {
+  flex: 0 0 auto;
+
+  border: 0;
+  background: transparent;
+  color: #6741ca;
+
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.sa-password button {
+  padding: 8px 2px;
+}
+
+.sa-password button:hover,
+.sa-forgot:hover,
+.sa-back:hover {
+  color: #43238e;
+}
+
+/* Forgot password */
+
+.sa-forgot {
+  justify-self: end;
+  padding: 0;
+
+  text-align: right;
+}
+
+/* Terms checkbox */
+
+.sa-terms {
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: flex-start;
+  gap: 9px !important;
+
+  color: #777187 !important;
+  font-weight: 500 !important;
+  line-height: 1.5;
+}
+
+.sa-terms input[type="checkbox"] {
+  flex: 0 0 auto;
+
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+
+  accent-color: #7352d5;
+  cursor: pointer;
+}
+
+/* =========================================
+   SUBMIT BUTTON
+========================================= */
+
+.sa-submit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 2px;
+  padding: 12px 14px;
+
+  border: 0;
+  border-radius: 11px;
+
+  background: linear-gradient(110deg, #7048d4, #5131a9);
+  color: #fff;
+
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+
+  box-shadow: 0 8px 22px rgba(91, 58, 180, 0.2);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.sa-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(91, 58, 180, 0.3);
+}
+
+.sa-submit:focus-visible {
+  outline: 3px solid rgba(139, 92, 246, 0.3);
+  outline-offset: 3px;
+}
+
+.sa-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+/* =========================================
+   ERROR / SUCCESS MESSAGES
+========================================= */
+
+.sa-message {
+  margin: 0;
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  font-size: 0.79rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.sa-message.error {
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #a52e3a;
+}
+
+.sa-message.success {
+  border: 1px solid #bbf7d0;
+  background: #eafbf3;
+  color: #14774f;
+}
+
+/* Back to login */
+
+.sa-back {
+  justify-self: center;
+  padding: 8px;
+}
+
+/* Bottom contact link */
+
+.sa-bottom {
+  flex: 0 0 auto;
+
+  margin: auto 0 0;
+  padding-top: 18px;
+
+  color: #777187;
+  font-size: 0.77rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.sa-bottom a {
+  color: #6741ca;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sa-bottom a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+@keyframes saFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(8deg);
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (min-width: 701px) and (max-width: 950px) {
+  .sa-dialog {
+    grid-template-columns: 0.78fr 1.22fr;
+    width: min(820px, 100%);
+  }
+
+  .sa-showcase {
+    padding: 26px;
+    gap: 18px;
+  }
+
+  .sa-showcase-copy h2 {
+    font-size: 2.15rem;
+  }
+
+  .sa-form-side {
+    padding: 34px 28px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+  .sa-overlay {
+    padding: 10px;
+
+    align-items: center;
+    justify-items: center;
+
+    overflow: hidden;
+  }
+
+  .sa-dialog {
+    display: block;
+
+    width: 100%;
+    max-width: 480px;
+
+    height: calc(100dvh - 20px);
+    max-height: calc(100dvh - 20px);
+    min-height: 0;
+
+    border-radius: 20px;
+  }
+
+  .sa-showcase {
+    display: none;
+  }
+
+  .sa-form-side {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    padding: 28px 22px 20px;
+  }
+
+  /* Login stays non-scrollable on normal mobile screens */
+  .sa-dialog--login .sa-form-side {
+    overflow: hidden;
+  }
+
+  .sa-dialog--login .sa-form {
+    gap: 11px;
+    margin-top: 16px;
+  }
+
+  /* Registration scrolls within the form panel */
+  .sa-dialog--register .sa-form-side,
+  .sa-dialog--forgot .sa-form-side {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .sa-form-side h1 {
+    margin-top: 9px;
+    font-size: 1.8rem;
+  }
+
+  .sa-subtitle {
+    margin-bottom: 17px;
+    font-size: 0.84rem;
+  }
+
+  .sa-tabs button {
+    padding: 11px 6px;
+    font-size: 0.81rem;
+  }
+
+  .sa-form {
+    gap: 13px;
+    margin-top: 18px;
+  }
+
+  .sa-form > label {
+    gap: 7px;
+  }
+
+  .sa-form input:not([type="checkbox"]) {
+    min-height: 44px;
+  }
+
+  .sa-close {
+    top: 10px;
+    right: 10px;
+
+    width: 36px;
+    height: 36px;
+  }
+
+  .sa-bottom {
+    padding-top: 16px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE / SHORT SCREENS
+========================================= */
+
+@media (max-width: 380px) {
+  .sa-overlay {
+    padding: 7px;
+  }
+
+  .sa-dialog {
+    height: calc(100dvh - 14px);
+    max-height: calc(100dvh - 14px);
+    border-radius: 17px;
+  }
+
+  .sa-form-side {
+    padding: 24px 16px 16px;
+  }
+
+  .sa-form-side h1 {
+    font-size: 1.65rem;
+  }
+
+  .sa-subtitle {
+    font-size: 0.81rem;
+  }
+
+  .sa-tabs button {
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-height: 680px) {
+  .sa-dialog {
+    height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+
+  .sa-showcase {
+    padding-top: 24px;
+    padding-bottom: 24px;
+    gap: 16px;
+  }
+
+  .sa-showcase-copy h2 {
+    margin-top: 12px;
+    margin-bottom: 10px;
+  }
+
+  .sa-form-side {
+    padding-top: 24px;
+    padding-bottom: 18px;
+  }
+
+  .sa-form-side h1 {
+    margin-top: 7px;
+  }
+
+  .sa-subtitle {
+    margin-bottom: 14px;
+  }
+
+  .sa-form {
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .sa-dialog--register .sa-form-side,
+  .sa-dialog--forgot .sa-form-side {
+    overflow-y: auto;
+  }
+}
+
+/* Login on very short screens: allow scrolling rather than clipping fields */
+@media (max-height: 560px) {
+  .sa-dialog--login .sa-form-side {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .sa-showcase::before {
+    animation: none;
+  }
+
+  .sa-close,
+  .sa-tabs button,
+  .sa-form input,
+  .sa-submit {
+    transition: none;
+  }
+}
+
+/* Mobile: prevent oversized login/register modal */
+@media (max-width: 600px) {
+  .sa-dialog {
+    width: calc(100% - 24px);
+    height: auto;
+    max-height: calc(100dvh - 32px);
+    min-height: 0;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 18px;
+  }
+
+  /* Hide the large decorative/branding panel on mobile */
+  .sa-showcase {
+    display: none !important;
+  }
+
+  .sa-form-side {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-height: calc(100dvh - 32px);
+    padding: 22px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Login: compact layout */
+  .sa-dialog--login .sa-form-side {
+    overflow-y: auto;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .sa-dialog--login .sa-form-side h1,
+  .sa-dialog--login .sa-form-side h2 {
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+
+  .sa-dialog--login .sa-form-side p {
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+
+  /* Register/Forgot: only the form content scrolls */
+  .sa-dialog--register .sa-form-side,
+  .sa-dialog--forgot .sa-form-side {
+    overflow-y: auto;
+  }
+
+  .sa-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+  }
+}
+
+@media (max-width: 600px) and (max-height: 700px) {
+  .sa-form-side {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .sa-dialog--login .sa-form-side {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}

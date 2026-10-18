@@ -1,0 +1,19 @@
+/* How it works: step 6 "achievement" state (green, trophy, burst) */
+.st .st-n{transition:background .5s,border-color .5s,box-shadow .5s,transform .5s}
+.st .st-n.win{background:linear-gradient(135deg,#FFCA88,#FFCA88);border-color:#FFCA88;color:#fff;transform:scale(1.14);
+  box-shadow:0 0 0 6px var(--surface),0 0 0 8px rgba(22,160,111,.25),0 16px 28px -8px rgba(22,160,111,.8)}
+.st .st-n.win .st-emoji{display:block;font-size:1.65rem;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.st-ring{position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(22,160,111,.65);pointer-events:none;animation:stRing 1.9s ease-out infinite}
+.st-ring.r2{animation-delay:.95s}
+.st-burst{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:3}
+.st-p{position:absolute;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;display:grid;place-items:center;font-size:1rem;line-height:1}
+.st-p.dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%}
+.st h3{transition:color .5s}
+.st.win h3{color:#0E7A4F}
+.st-badge{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin-top:12px;padding:6px 10px;border-radius:999px;font-weight:700;font-size:.72rem;color:#0E6B52;background:var(--mint-soft);border:1px solid #BFE8D8;box-shadow:0 8px 18px -10px rgba(22,160,111,.7)}
+.st-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes stRing{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+@media (max-width:900px){
+  .st-badge{justify-self:start;grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){.st-ring{animation:none;opacity:0}}

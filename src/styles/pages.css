@@ -1,0 +1,24 @@
+/* ===== Shared inner-page header (PageHero) ===== */
+.ph{position:relative;isolation:isolate;overflow:hidden;padding:calc(92px + clamp(24px,4vw,56px)) 0 clamp(36px,5vw,64px);background:linear-gradient(180deg,#EEF4FD,var(--bg))}
+.ph-in{display:flex;flex-direction:column;align-items:flex-start}
+.ph h1{font-size:clamp(2.1rem,5.2vw,3.7rem);margin-top:16px;letter-spacing:-.03em;max-width:20ch}
+.ph .ab-lead{max-width:62ch}
+.ph-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.ph-chips a{display:inline-flex;align-items:center;gap:9px;padding:9px 16px 9px 10px;border-radius:999px;text-decoration:none;font-weight:700;font-size:.92rem;color:var(--blue-deep);
+  background:rgba(255,255,255,.75);border:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:transform .25s,box-shadow .25s,background .25s,color .25s}
+.ph-chips a span{font:700 .72rem var(--font-mono);padding:4px 7px;border-radius:99px;background:var(--sky);color:var(--blue);transition:background .25s,color .25s}
+.ph-chips a:hover{transform:translateY(-3px);background:var(--blue);color:#fff;box-shadow:0 14px 24px -12px rgba(31,84,150,.6)}
+.ph-chips a:hover span{background:rgba(255,255,255,.2);color:#fff}
+@media (max-width:640px){
+  .ph-chips{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;padding-bottom:4px;margin-inline:-2px}
+  .ph-chips::-webkit-scrollbar{display:none}
+  .ph-chips li{flex:none}
+}
+
+/* ===== Courses page ===== */
+.cp-inc{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cp-inc-card{display:grid;gap:10px;align-content:start}
+.cp-inc-card h3{font-size:1.1rem}
+.cp-inc-card p{color:var(--muted);font-size:.94rem}
+@media (max-width:1024px){.cp-inc{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.cp-inc{grid-template-columns:1fr}}

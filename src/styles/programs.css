@@ -1,0 +1,67 @@
+/* ===== Programs: professional cards with a rotating border on hover ===== */
+@property --pc-ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.pgrid{align-items:stretch}
+.pc2{position:relative;display:flex;border-radius:22px;background:var(--surface);border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(14,26,51,.04),0 12px 28px -20px rgba(20,58,112,.32);transition:box-shadow .3s,border-color .3s}
+.pc2::before{content:"";position:absolute;inset:-1px;border-radius:22px;padding:2px;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:conic-gradient(from var(--pc-ang),var(--c),transparent 30%,color-mix(in srgb,var(--c) 60%,#fff) 55%,transparent 80%,var(--c));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:pcSpin 3s linear infinite}
+@media (hover:hover) and (pointer:fine){
+  .pc2:hover{border-color:transparent;box-shadow:0 24px 44px -24px color-mix(in srgb,var(--c) 45%,#0E1A33)}
+  .pc2:hover::before{opacity:1}
+}
+@keyframes pcSpin{to{--pc-ang:360deg}}
+
+.pc2-in{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:22px;overflow:hidden}
+.pc2-in::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--c),transparent 85%)}
+.pc2-top{display:flex;justify-content:space-between;align-items:center}
+.pc2-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--cs);color:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.pc2-ic .ic{width:27px;height:27px}
+.pc2-no{font:800 2.2rem/1 var(--font-display);color:var(--cs);-webkit-text-stroke:1px color-mix(in srgb,var(--c) 30%,transparent)}
+.pc2 h3{font-size:1.3rem}
+.pc2-sum{color:var(--muted);font-size:.95rem}
+
+.pc2-key{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+.pc2-key>div{padding:11px 13px;border-radius:14px;background:var(--bg);border:1px solid var(--line);min-width:0}
+.pc2-key small{display:block;font:700 .66rem var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.pc2-key b{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:.93rem;font-family:var(--font-display);overflow-wrap:anywhere}
+.pc2-key b .ic{color:var(--c);flex:none}
+.pc2-key .fee{color:var(--c)}
+
+.pc2-meta{display:grid;margin:0}
+.pc2-meta div{display:grid;grid-template-columns:104px 1fr;gap:10px;padding-block:9px;border-top:1px dashed var(--line);font-size:.9rem}
+.pc2-meta dt{display:flex;align-items:center;gap:7px;color:var(--muted)}
+.pc2-meta dt .ic{color:var(--c)}
+.pc2-meta dd{margin:0;font-weight:600;min-width:0}
+
+.pc2-more{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:4px 0;font-weight:700;color:var(--blue)}
+.pc2-more .ic{transition:transform .3s}
+.pc2.open .pc2-more .ic{transform:rotate(180deg)}
+.pc2-list{display:grid;gap:8px;padding:2px 0 8px;font-size:.92rem}
+.pc2-list li{display:flex;gap:9px}
+.pc2-list .ic{color:var(--mint);margin-top:.28em;flex:none}
+.pc2 .blob-btn{margin-top:auto}
+
+@media (max-width:640px){.pc2-in{padding:20px}.pc2-meta div{grid-template-columns:96px 1fr}}
+@media (prefers-reduced-motion:reduce){.pc2::before{animation:none}}
+.pc2-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: 46%;
+  margin: 12px 0 8px;
+  padding: 6px 10px;
+  border-radius: 30px;
+  background: var(--cs, #CFE1F8);
+  color: var(--c, #143A70);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pc2-tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
