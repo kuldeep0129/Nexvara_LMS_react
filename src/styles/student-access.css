@@ -1,5 +1,5 @@
 /* =========================================
-   STUDENT ACCESS MODAL — NEXVARA
+   STUDENT ACCESS MODAL — NEXVARA (LIGHT THEME SHOWCASE)
 ========================================= */
 
 .sa-overlay {
@@ -86,7 +86,7 @@
 }
 
 /* =========================================
-   LEFT SHOWCASE PANEL
+   LEFT SHOWCASE PANEL (LIGHT THEME)
 ========================================= */
 
 .sa-showcase {
@@ -103,25 +103,28 @@
 
   overflow: hidden;
 
-  color: #fff;
+  color: #201b35; 
 
+  /* Soft light gradients with purple/blue touch */
   background:
     radial-gradient(
       ellipse at 12% 8%,
-      rgba(85, 231, 237, 0.25),
+      rgba(139, 92, 246, 0.08),
       transparent 40%
     ),
     radial-gradient(
       ellipse at 90% 80%,
-      rgba(139, 92, 246, 0.55),
+      rgba(85, 231, 237, 0.15),
       transparent 45%
     ),
     linear-gradient(
       145deg,
-      #111126,
-      #28204d 60%,
-      #19172f
+      #f8f9fc,
+      #f0eef8 60%,
+      #ffffff
     );
+  
+  border-right: 1px solid #e4e0ee; 
 }
 
 .sa-showcase::before,
@@ -132,7 +135,7 @@
   width: 280px;
   height: 280px;
 
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.1);
   border-radius: 50%;
 
   pointer-events: none;
@@ -143,8 +146,8 @@
   right: -150px;
 
   box-shadow:
-    0 0 0 25px rgba(255, 255, 255, 0.025),
-    0 0 0 55px rgba(255, 255, 255, 0.025);
+    0 0 0 25px rgba(124, 58, 237, 0.03),
+    0 0 0 55px rgba(124, 58, 237, 0.03);
 
   animation: saFloat 9s ease-in-out infinite;
 }
@@ -166,9 +169,10 @@
 
   min-width: 0;
 
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.07em;
+  color: #201b35;
 }
 
 .sa-brand > span {
@@ -176,9 +180,10 @@
 }
 
 .sa-brand b {
-  color: #70e9e7;
+  color: #603bc1; /* Darker purple for contrast */
 }
 
+/* Logo visibility fix */
 .sa-brand-logo {
   display: block;
   flex: 0 0 auto;
@@ -188,6 +193,10 @@
 
   object-fit: contain;
   border-radius: 10px;
+  background: #ffffff;
+  padding: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e4e0ee;
 }
 
 /* Showcase copy */
@@ -209,7 +218,7 @@
 }
 
 .sa-kicker {
-  color: #8ff1ec;
+  color: #603bc1;
 }
 
 .sa-showcase-copy h2 {
@@ -218,10 +227,11 @@
   font-size: clamp(2rem, 3.2vw, 3rem);
   line-height: 1.12;
   letter-spacing: -0.055em;
+  color: #201b35;
 }
 
 .sa-showcase-copy h2 em {
-  color: #91efec;
+  color: #8b5cf6;
   font-style: normal;
 }
 
@@ -229,7 +239,7 @@
   max-width: 310px;
   margin: 0;
 
-  color: #d1cde7;
+  color: #777187;
 
   font-size: 0.91rem;
   line-height: 1.75;
@@ -247,10 +257,10 @@
 
   padding: 13px;
 
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.1);
   border-radius: 16px;
 
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.6);
 
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -266,8 +276,8 @@
 
   border-radius: 12px;
 
-  background: rgba(143, 241, 236, 0.15);
-  color: #8ff1ec;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7352d5;
 
   font-size: 19px;
 }
@@ -279,11 +289,12 @@
 
 .sa-feature b {
   font-size: 0.82rem;
+  color: #201b35;
 }
 
 .sa-feature small {
   margin-top: 5px;
-  color: #c7c1df;
+  color: #777187;
   font-size: 0.72rem;
   line-height: 1.5;
 }
@@ -998,4 +1009,38 @@
     padding-top: 12px;
     padding-bottom: 12px;
   }
+}
+
+.sa-password-rules {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.sa-password-strength {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.sa-password-strength.strong,
+.sa-password-rule.valid {
+  color: #16803c;
+}
+
+.sa-password-strength.weak,
+.sa-password-rule.invalid {
+  color: #dc2626;
+}
+
+.sa-password-rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sa-password-rule span {
+  font-weight: 700;
 }

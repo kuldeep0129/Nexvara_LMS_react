@@ -2,7 +2,7 @@
    core.css: glass navbar, blob buttons, 3D hero, motion helpers.
    Loaded after sections.css, so rules here win on equal specificity.
    ========================================================== */
-
+ @import "tailwindcss";
 html{scroll-padding-top:104px}
 .sr{position:absolute;left:-9999px}
 .grad{font-style:normal;background:linear-gradient(95deg,var(--blue) 0%,#3C86D8 55%,#16A6C9 100%);-webkit-background-clip:text;background-clip:text;color:transparent}

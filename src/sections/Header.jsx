@@ -1,13 +1,12 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import Icon from '../ui/Icon.jsx';
-import BlobButton from '../ui/BlobButton.jsx';
-import { useApp } from '../ctx.jsx';  
-import logo from '../images/nexvara-logo-sort.png';
-import {daysLeft } from '../hooks.js';
-import { ANNOUNCEMENTS, NAV, SITE } from '../data.js';
+import { useApp } from '../ctx.jsx';
+import { NAV, SITE } from '../data.js';
 import useAnnouncements from '../hook/useAnnouncements.js';
+import logo from '../images/nexvara-logo-sort.png';
+import BlobButton from '../ui/BlobButton.jsx';
+import Icon from '../ui/Icon.jsx';
 
 
 export function Announcement() {
@@ -131,7 +130,7 @@ const { openStudentAccess } = useApp();
   setOpen(false);
   openStudentAccess();
 }}>
-              Student Login
+               Login
             </BlobButton>
             <BlobButton size="sm" href="#apply">
               Apply Now
@@ -174,7 +173,7 @@ const { openStudentAccess } = useApp();
   setOpen(false);
   openStudentAccess();
 }}>
-                  Student Login
+                   Login
                 </BlobButton>
                 <BlobButton href="#apply" block onClick={() => setOpen(false)}>
                   Apply Now
