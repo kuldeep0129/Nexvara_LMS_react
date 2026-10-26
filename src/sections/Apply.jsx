@@ -25,7 +25,7 @@ const CALLING_OPTIONS = [
   { value: 'morning', label: 'Morning' },
   { value: 'afternoon', label: 'Afternoon' },
   { value: 'evening', label: 'Evening' },
-  { value: 'never', label: 'Do not call me' },
+  
 ];
 
 function validateForm(values, program) {
@@ -284,13 +284,13 @@ export default function Apply() {
             ))}
           </ul>
 
-          <span className="dl">
+          {/* <span className="dl">
             <Icon name="clock" />
             Applications close {SITE.deadlineLabel} ·{' '}
             {left > 0
               ? `${left} ${left === 1 ? 'day' : 'days'} left`
               : 'next intake opens soon'}
-          </span>
+          </span> */}
         </Reveal>
 
         <Reveal delay={0.12} className="formc">

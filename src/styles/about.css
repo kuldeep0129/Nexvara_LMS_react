@@ -66,7 +66,7 @@
 .ab-quote-mark{font:800 5rem/.6 var(--font-display);color:var(--amber);display:block;height:34px}
 .ab-story-card p{font:600 clamp(1.1rem,2vw,1.35rem)/1.45 var(--font-display);position:relative;z-index:1}
 .ab-story-card footer{display:flex;align-items:center;gap:12px;margin-top:20px;position:relative;z-index:1}
-.ab-story-card .av{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.ab-story-card .av{width:42px;height:42px;border-radius:50%;background:rgb(243, 239, 239);display:grid;place-items:center;font-weight:800;font-size:.85rem}
 .ab-story-card small{display:block;opacity:.75;font-size:.8rem}
 .ab-chips{display:flex;flex-wrap:wrap;gap:8px}
 .ab-tech{padding:.45rem .95rem;border-radius:999px;background:var(--sky);color:var(--blue-deep);font-weight:700;font-size:.88rem;border:1px solid var(--sky-2)}

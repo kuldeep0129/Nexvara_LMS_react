@@ -1,9 +1,7 @@
-// src/services/authService.js
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 export const authService = {
   register: async (userData) => {
-    // ... (Aapka existing register code same rahega)
     const payload = {
       fullName: userData.fullName,
       email: userData.email,
@@ -30,20 +28,67 @@ export const authService = {
         password: credentials.password
       }),
     });
-
     const data = await response.json().catch(() => ({}));
-
+    
     if (!response.ok) {
       throw new Error(data.message || data.title || 'Invalid credentials. Please try again.');
     }
-
-    // NAYA: Token aur User data save karna
+    
     if (data.success && data.data) {
       localStorage.setItem('token', data.data.accessToken);
       localStorage.setItem('user', JSON.stringify(data.data)); 
-      // data.data mein roles, userId, email sab hai
     }
+    return data;
+  },
 
+  forgotPassword: async (email) => {
+    const response = await fetch(`${API_BASE}/Account/Forgot-Password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.title || 'Failed to send reset email.');
+    return data;
+  },
+
+  resetPassword: async (payload) => {
+    const response = await fetch(`${API_BASE}/Account/Reset-Password`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json' 
+      },
+      body: JSON.stringify(payload), 
+    });
+
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      throw new Error(data.message || data.title || 'Failed to reset password. The link may be expired.');
+    }
+    
+    return data;
+  },
+
+   changePassword: async (payload) => {
+    // payload = { currentPassword, newPassword, confirmPassword }
+    const response = await fetch(`${API_BASE}/Account/Change-Password`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}` // Secure API Call
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      throw new Error(data.message || data.title || 'Failed to change password. Please check your current password.');
+    }
+    
     return data;
   }
-};
+}; // <-- Extra bracket yahan se hata diya gaya hai

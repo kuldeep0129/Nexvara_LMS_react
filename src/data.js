@@ -137,9 +137,9 @@ export const PARTNER_MODES = [
 ];
 
 export const CERTS = {
-  'INST-26-00142': ['Student Name', '.NET Full Stack Program', '12 Aug 2026'],
-  'INST-26-00177': ['Student Name', 'Data Analytics Program', '02 Sep 2026'],
-  'INST-26-00201': ['Student Name', 'Python Programming', '19 Sep 2026'],
+  'INST-26-00142': ['Aman Verma', '.NET Full Stack Program', '12 Aug 2026'],
+  'INST-26-00177': ['Aditya Pandey', 'Data Analytics Program', '02 Sep 2026'],
+  'INST-26-00201': ['Akirit Singh', 'Python Programming', '19 Sep 2026'],
 };
 
 export const CRITERIA = [
@@ -175,17 +175,47 @@ export const FAQ = {
 };
 
 export const SHOTS = [
-  { title: 'Sales Insights Dashboard', tags: ['SQL', 'Power BI'], who: 'Student Name, BBA 3rd year', c: 'var(--blue)', cs: 'var(--sky-2)', kind: 'bars', bars: [40, 70, 55, 90, 65] },
-  { title: 'Result Management Portal', tags: ['.NET', 'React'], who: 'Student Name, B.Tech CSE final year', c: 'var(--mint)', cs: 'var(--mint-soft)', kind: 'rows', bars: [90, 70, 80, 45] },
-  { title: 'Spam Message Classifier', tags: ['Python', 'ML'], who: 'Student Name, MCA 2nd year', c: '#B97800', cs: 'var(--amber-soft)', kind: 'bars', bars: [85, 60, 75, 35, 50] },
+  { title: 'Sales Insights Dashboard', tags: ['SQL', 'Power BI'], who: 'Aman Verma, BBA 3rd year', c: 'var(--blue)', cs: 'var(--sky-2)', kind: 'bars', bars: [40, 70, 55, 90, 65] },
+  { title: 'Result Management Portal', tags: ['.NET', 'React'], who: 'Himanshu Pandey, B.Tech CSE final year', c: 'var(--mint)', cs: 'var(--mint-soft)', kind: 'rows', bars: [90, 70, 80, 45] },
+  { title: 'Spam Message Classifier', tags: ['Python', 'ML'], who: 'Aditiya Pandey, MCA 2nd year', c: '#B97800', cs: 'var(--amber-soft)', kind: 'bars', bars: [85, 60, 75, 35, 50] },
 ];
 
+
 export const REVIEWS = [
-  { text: 'The weekly code reviews changed how I write code. My final project went on GitHub with a proper README.', name: 'Student Name', role: 'B.Tech CSE, Summer Training', init: 'SN', c: '#2A1B00', bg: 'var(--amber)' },
-  { text: 'I started with no Python background. The assignments were small enough to finish and hard enough to teach me.', name: 'Student Name', role: 'BCA, Project-Based Learning', init: 'SN', c: 'var(--blue-deep)', bg: 'var(--sky-2)' },
-  { text: 'The mock interview showed me gaps I did not know I had. I fixed them before my first real interview.', name: 'Student Name', role: 'MCA, Internship', init: 'SN', c: 'var(--mint)', bg: 'var(--mint-soft)' },
-  { text: 'As a parent, I liked getting a clear progress summary. It showed attendance and what my child had built.', name: 'Parent Name', role: 'Parent of a Diploma student', init: 'PN', c: 'var(--coral)', bg: 'var(--coral-soft)' },
+  {
+    text: 'Nexvara helped me understand how to approach a real project instead of just completing tutorials. The practical assignments and code reviews made a big difference in my confidence.',
+    name: 'Aarav Sharma',
+    role: 'B.Tech CSE Student',
+    init: 'AS',
+    c: '#2A1B00',
+    bg: 'var(--amber)',
+  },
+  {
+    text: 'I was new to Python when I joined the program. The learning path was easy to follow, and the projects helped me understand concepts by actually building things.',
+    name: 'Priya Verma',
+    role: 'BCA Student',
+    init: 'PV',
+    c: 'var(--blue-deep)',
+    bg: 'var(--sky-2)',
+  },
+  {
+    text: 'The mock interview sessions helped me identify the areas I needed to improve. I became much more comfortable explaining my projects and answering technical questions.',
+    name: 'Rahul Kumar',
+    role: 'MCA Student',
+    init: 'RK',
+    c: 'var(--mint)',
+    bg: 'var(--mint-soft)',
+  },
+  {
+    text: 'What I liked most was the regular progress tracking. We could understand what was completed, where improvement was needed, and what the student was working on.',
+    name: 'Neha Singh',
+    role: 'Parent',
+    init: 'NS',
+    c: 'var(--coral)',
+    bg: 'var(--coral-soft)',
+  },
 ];
+
 
 export const ACHIEVEMENTS = [
   ['award', 'Hackathon finalist'],
@@ -200,8 +230,8 @@ export const PROGRAM_OPTIONS = ['Summer Training', 'Internship', 'Apprenticeship
 export const CONTACT = [
   ['phone', 'Phone', '+91 88407 57589'],
   ['mail', 'Email', 'info.nexvara@gmail.com'],
-  ['pin', 'Lucknow', 'Institute address line, City, State, PIN'],
-  ['clock', 'Hours', 'Mon to Sat, 10:00 AM to 6:00 PM'],
+  ['pin', 'Delhi', 'RZB-215 B Block ,10,Nihar Vihar, 110041, West Delhi, India'],
+  ['clock', 'Always', 'Available 24/7'],
 ];
 
 export const FOOTER_COLS = [

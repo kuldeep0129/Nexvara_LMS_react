@@ -102,8 +102,8 @@ export default function Work() {
           }
           action={<span className="demo-tag">Portfolio preview</span>}
         >
-          Explore project showcases, student experiences and learning milestones.
-          Sample reviews and achievements should be replaced with verified entries.
+          Explore project , student experiences and learning milestones.
+           reviews and achievements should be replaced with verified entries.
         </SectionHead>
 
         {/* Project showcase */}

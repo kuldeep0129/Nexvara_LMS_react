@@ -15,7 +15,7 @@ export default function CtaBand({ title, text }) {
           <p>{text}</p>
           <div className="ab-cta center">
             <BlobButton size="lg" variant="amber" href="#apply" iconRight="arrow">Apply Now</BlobButton>
-            <BlobButton size="lg" variant="soft" href="#" icon="phone" onClick={demo}>Book a free call</BlobButton>
+            <BlobButton size="lg" variant="soft" href="#" icon="phone">Book a free call</BlobButton>
           </div>
         </Reveal>
       </div>

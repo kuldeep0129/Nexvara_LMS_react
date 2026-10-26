@@ -6,7 +6,7 @@ import { EASE, Reveal, Stagger, Card } from '../ui/Reveal.jsx';
 import { ASSIGNMENTS, PROJECTS, REPO_ROWS } from '../data.js';
 
 const TABS = [
-  ['Sample projects', 'folder'],
+  ['Project Library', 'folder'],
   ['GitHub repositories', 'github'],
   ['Assignments', 'file'],
   ['Mentor guidance', 'users'],
@@ -84,17 +84,19 @@ function Assignments() {
 }
 
 function Mentor() {
-  const msgs = [
-    ['me', 'Student', 'My API returns a 500 error when the name is empty.'],
-    ['mt', 'Mentor', 'Add validation in the command handler and return a 400 with a clear message. Want to pair on it at 5 PM?'],
-    ['me', 'Student', 'Yes please. I will push my branch first.'],
-  ];
+ 
+const msgs = [
+  ['me', 'Ananya Verma', 'I have completed the login API. Could you review it before I move to the next module?'],
+  ['mt', 'Kuldeep Tiwari', 'Sure. The flow looks good. Add proper validation and handle invalid login responses before moving ahead.'],
+  ['me', 'Ananya Verma', 'Got it. I will make the changes and push the updated code for review.'],
+];
+
   return (
     <div className="mentor-wrap">
       <div className="card">
         <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 16 }}>
-          <span className="avatar">M</span>
-          <div><b style={{ fontSize: '1.1rem' }}>Mentor Name</b><div style={{ color: 'var(--muted)', fontSize: '.9rem' }}>Senior engineer (profile to be added)</div></div>
+          <span className="avatar">KT</span>
+          <div><b style={{ fontSize: '1.1rem' }}>Kuldeep Tiwari</b><div style={{ color: 'var(--muted)', fontSize: '.9rem' }}>Senior Engineer</div></div>
         </div>
         <ul className="ul-check">
           {['Weekly one-to-one progress check', 'Written code review on every pull request', 'Mock interview before the final week'].map((t) => (

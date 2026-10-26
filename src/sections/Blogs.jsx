@@ -25,12 +25,11 @@ function Thumb({ p, big }) {
   );
 }
 
-function PostCard({ p, big, demo }) {
+function PostCard({ p, big, openStudentAccess }) {
   return (
     <motion.a
       layout
-      href="#"
-      onClick={demo}
+    href="#student-access"   onClick={(e) => {e.preventDefault(); openStudentAccess();}}
       className={`bl-card${big ? ' big' : ''}`}
       style={{ '--c': p.c, '--cs': p.cs }}
       initial={{ opacity: 0, y: 22, scale: 0.97 }}
@@ -57,7 +56,7 @@ function PostCard({ p, big, demo }) {
 }
 
 export default function Blogs() {
-  const { demo } = useApp();
+ const { demo, openStudentAccess } = useApp();
   const cats = useMemo(() => ['All', ...Array.from(new Set(POSTS.map((p) => p.cat)))], []);
   const [cat, setCat] = useState('All');
   const all = cat === 'All';
@@ -70,7 +69,7 @@ export default function Blogs() {
           eyebrow="Blogs and career resources"
           id="h-blog"
           title={<>Guides for <em className="grad">your next step</em></>}
-          action={<BlobButton variant="outline" href="#" onClick={demo} iconRight="arrow">Read All Articles</BlobButton>}
+          action={<BlobButton variant="outline"   href="#student-access"   onClick={(e) => {e.preventDefault(); openStudentAccess();}} iconRight="arrow">Read All Articles</BlobButton>}
         >
           Career advice, interview preparation, tutorials, project ideas and internship tips from our mentors.
         </SectionHead>
@@ -89,7 +88,7 @@ export default function Blogs() {
         <motion.div layout className={`bl-grid${all ? '' : ' flat'}`}>
           <AnimatePresence mode="popLayout" initial>
             {list.map((p, i) => (
-              <PostCard key={p.title} p={p} big={all && i === 0 && p.big} demo={demo} />
+              <PostCard key={p.title} p={p} big={all && i === 0 && p.big}   openStudentAccess={openStudentAccess}/>
             ))}
           </AnimatePresence>
         </motion.div>
@@ -97,7 +96,7 @@ export default function Blogs() {
         <Reveal className="bl-sub">
           <div className="bl-sub-ic"><Icon name="mail" /></div>
           <div className="bl-sub-t"><b>Get new guides in your inbox</b><span>One short email when we publish. No spam, unsubscribe anytime.</span></div>
-          <BlobButton href="#" onClick={demo} iconRight="arrow">Notify me</BlobButton>
+          <BlobButton  href="#student-access"   onClick={(e) => {e.preventDefault(); openStudentAccess();}} iconRight="arrow">Notify me</BlobButton>
         </Reveal>
       </div>
     </section>

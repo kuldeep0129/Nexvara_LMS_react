@@ -8,25 +8,25 @@ const SOCIAL_LINKS = [
   {
     name: 'LinkedIn',
     icon: 'linkedin',
-    href: 'https://www.linkedin.com/company/your-company/',
+    href: 'https://www.linkedin.com/company/nexvara-technologies/',
     className: 'social-linkedin',
   },
   {
     name: 'WhatsApp',
     icon: 'whatsapp',
-    href: 'https://wa.me/91XXXXXXXXXX',
+    href: 'https://wa.me/918840757589',
     className: 'social-whatsapp',
   },
   {
     name: 'Instagram',
     icon: 'instagram',
-    href: 'https://www.instagram.com/your-account/',
+    href: 'https://www.instagram.com/nexvaratechnologies?exln=ejkzbDk4bXE3NzUz',
     className: 'social-instagram',
   },
   {
     name: 'YouTube',
     icon: 'youtube',
-    href: 'https://www.youtube.com/@your-channel',
+    href: 'https://youtube.com/@nexvaratechnologies?si=WYd2aORHBQUFfMAD',
     className: 'social-youtube',
   },
 ];

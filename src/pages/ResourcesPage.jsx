@@ -1,6 +1,7 @@
 import ResourcesHero from '../sections/ResourcesHero.jsx';
 import CtaBand from '../ui/CtaBand.jsx';
 import useSeo from '../useSeo.js';
+
 import Blogs from '../sections/Blogs.jsx';
 import Certificates from '../sections/Certificates.jsx';
 import Work from '../sections/Work.jsx';

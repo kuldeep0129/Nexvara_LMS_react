@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // NAYA IMPORT
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../ctx.jsx';
 import logo from '../images/nexvara-logo-sort.png';
 import '../styles/student-access.css';
@@ -10,15 +10,14 @@ import ToastNotification from '../ui/ToastNotification';
 
 export default function StudentAccess() {
   const { studentAccessOpen, closeStudentAccess } = useApp();
-  const navigate = useNavigate(); // NAYA HOOK
+  const navigate = useNavigate();
   
   const { 
     isLoading, error: apiError, success: apiSuccess, 
-    registerUser, loginUser, clearMessages 
+    registerUser, loginUser, forgotPassword, clearMessages 
   } = useAuth();
 
   const [mode, setMode] = useState('login');
-  // ... (baaki states same rahenge)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -29,7 +28,6 @@ export default function StudentAccess() {
 
   const [toast, setToast] = useState({ visible: false, type: 'success', title: '', message: '' });
 
-  // ... (showToast, closeToast, passwordRules, useEffect same rahenge)
   const showToast = (type, title, message) => setToast({ visible: true, type, title, message });
   const closeToast = () => setToast(prev => ({ ...prev, visible: false }));
 
@@ -89,29 +87,32 @@ export default function StudentAccess() {
     // ==========================================
     if (mode === 'login') {
       const result = await loginUser({ email: form.email, password: form.password });
-      
       if (result.success) {
-        showToast('success', 'Login Successful', result.data.message || 'Welcome back to your portal!');
+        showToast('success', 'Login Successful', result.data.message || 'Welcome back!');
         setForm(prev => ({ ...prev, password: '' }));
-        
-        // NAYA: Role ke hisaab se redirect
         const roles = result.data.data.roles || [];
-        closeStudentAccess(); // Modal band karein
-
-        // Thoda delay taaki toast dikh sake aur animation smooth ho
+        closeStudentAccess();
         setTimeout(() => {
-          if (roles.includes('SuperAdmin') || roles.includes('Admin')) {
-            navigate('/admin');
-          } else if (roles.includes('Trainer')) {
-            navigate('/teacher');
-          } else {
-            // Default Student
-            navigate('/student');
-          }
+          if (roles.includes('SuperAdmin') || roles.includes('Admin')) navigate('/admin');
+          else if (roles.includes('Trainer')) navigate('/teacher');
+          else navigate('/student');
         }, 1000);
-
       } else {
         showToast('error', 'Login Failed', result.error);
+      }
+      return;
+    }
+
+    // ==========================================
+    // FORGOT PASSWORD LOGIC (NAYA)
+    // ==========================================
+    if (mode === 'forgot') {
+      const result = await forgotPassword(form.email.trim());
+      if (result.success) {
+        showToast('success', 'Email Sent!', result.data.message || 'Check your inbox for reset instructions.');
+        setForm(prev => ({ ...prev, email: '' })); // Clear email
+      } else {
+        showToast('error', 'Failed', result.error);
       }
       return;
     }
@@ -126,9 +127,8 @@ export default function StudentAccess() {
       if (!form.agree) return setValidationError('Please accept the student portal terms.');
 
       const result = await registerUser(form);
-      
       if (result.success) {
-        showToast('success', 'Account Created!', result.data.message || 'Your student portal is ready. Please sign in.');
+        showToast('success', 'Account Created!', result.data.message || 'Your portal is ready.');
         setForm({ fullName: '', email: '', phone: '', password: '', confirmPassword: '', agree: false });
         setTimeout(() => {
           switchMode('login');
@@ -140,33 +140,15 @@ export default function StudentAccess() {
     } 
   }
 
-  // ... (Return JSX same rahega, bas ensure karein ki saare inputs bind hain)
   return (
     <>
-      <ToastNotification 
-        isVisible={toast.visible}
-        type={toast.type}
-        title={toast.title}
-        message={toast.message}
-        onClose={closeToast}
-      />
+      <ToastNotification isVisible={toast.visible} type={toast.type} title={toast.title} message={toast.message} onClose={closeToast} />
 
       <AnimatePresence>
         {studentAccessOpen && (
-          <motion.div
-            className="sa-overlay"
-            onMouseDown={event => { if (event.target === event.currentTarget) closeStudentAccess(); }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          >
-            <motion.section
-              className={`sa-dialog sa-dialog--${mode}`}
-              role="dialog" aria-modal="true" aria-labelledby="sa-title"
-              initial={{ opacity: 0, y: 25, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 15, scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 250, damping: 24 }}
-            >
-              <button className="sa-close" type="button" onClick={closeStudentAccess} aria-label="Close login dialog">×</button>
+          <motion.div className="sa-overlay" onMouseDown={e => { if (e.target === e.currentTarget) closeStudentAccess(); }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.section className={`sa-dialog sa-dialog--${mode}`} role="dialog" aria-modal="true" initial={{ opacity: 0, y: 25, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.97 }} transition={{ type: 'spring', stiffness: 250, damping: 24 }}>
+              <button className="sa-close" type="button" onClick={closeStudentAccess}>×</button>
 
               <div className="sa-showcase">
                 <div className="sa-brand">
@@ -191,54 +173,46 @@ export default function StudentAccess() {
               <div className="sa-form-side">
                 <span className="sa-eyebrow">STUDENT PORTAL</span>
                 <h1 id="sa-title">
-                  {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create your account' : 'Reset password'}
+                  {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create your account' : 'Forgot Password'}
                 </h1>
                 <p className="sa-subtitle">
-                  {mode === 'login' ? 'Sign in to continue your learning journey.' : mode === 'register' ? 'Create your student account to get started.' : 'Enter your registered email address.'}
+                  {mode === 'login' ? 'Sign in to continue your learning journey.' : mode === 'register' ? 'Create your student account to get started.' : 'Enter your email to receive reset instructions.'}
                 </p>
 
-                <div className="sa-tabs">
-                  <button type="button" className={mode === 'login' ? 'active' : ''} onClick={() => switchMode('login')}>Sign in</button>
-                  <button type="button" className={mode === 'register' ? 'active' : ''} onClick={() => switchMode('register')}>Create account</button>
-                </div>
+                {mode !== 'forgot' && (
+                  <div className="sa-tabs">
+                    <button type="button" className={mode === 'login' ? 'active' : ''} onClick={() => switchMode('login')}>Sign in</button>
+                    <button type="button" className={mode === 'register' ? 'active' : ''} onClick={() => switchMode('register')}>Create account</button>
+                  </div>
+                )}
 
                 <form className="sa-form" onSubmit={submit}>
                   {mode === 'register' && (
-                    <label>
-                      Full name
-                      <input name="fullName" type="text" autoComplete="name" value={form.fullName} onChange={update} placeholder="Enter your full name" maxLength={100} required />
-                    </label>
+                    <label>Full name<input name="fullName" type="text" value={form.fullName} onChange={update} placeholder="Enter your full name" required /></label>
                   )}
 
                   <label>
                     Email address
-                    <input name="email" type="email" autoComplete="email" value={form.email} onChange={update} placeholder="you@example.com" required />
+                    <input name="email" type="email" value={form.email} onChange={update} placeholder="you@example.com" required />
                   </label>
 
                   {mode === 'register' && (
-                    <label>
-                      Phone number
-                      <input name="phone" type="tel" inputMode="numeric" autoComplete="tel" value={form.phone} onChange={update} placeholder="Your phone number" maxLength={10} />
-                    </label>
+                    <label>Phone number<input name="phone" type="tel" value={form.phone} onChange={update} placeholder="Your phone number" maxLength={10} /></label>
                   )}
 
                   {mode !== 'forgot' && (
                     <label>
                       Password
                       <span className="sa-password">
-                        <input name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={form.password} onChange={update} placeholder="Enter your password" required />
-                        <button type="button" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                          {showPassword ? 'Hide' : 'Show'}
-                        </button>
+                        <input name="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={update} placeholder="Enter your password" required />
+                        <button type="button" onClick={() => setShowPassword(v => !v)}>{showPassword ? 'Hide' : 'Show'}</button>
                       </span>
                       {mode === 'register' && form.password.length > 0 && (
-                        <div className="sa-password-rules" aria-live="polite">
-                          <div className={`sa-password-strength ${isPasswordStrong ? 'strong' : 'weak'}`}>
-                            {isPasswordStrong ? '✓ Strong password' : 'Password requirements'}
-                          </div>
+                        <div className="sa-password-rules">
+                          <div className={`sa-password-strength ${isPasswordStrong ? 'strong' : 'weak'}`}>{isPasswordStrong ? '✓ Strong' : 'Requirements'}</div>
                           {passwordRules.map(rule => (
                             <div key={rule.label} className={`sa-password-rule ${rule.valid ? 'valid' : 'invalid'}`}>
-                              <span aria-hidden="true">{rule.valid ? '✓' : '✗'}</span> {rule.label}
+                              <span>{rule.valid ? '✓' : '✗'}</span> {rule.label}
                             </div>
                           ))}
                         </div>
@@ -251,21 +225,17 @@ export default function StudentAccess() {
                       <label>
                         Confirm password
                         <span className="sa-password">
-                          <input name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" value={form.confirmPassword} onChange={update} placeholder="Re-enter your password" required />
-                          <button type="button" onClick={() => setShowConfirmPassword(value => !value)} aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}>
-                            {showConfirmPassword ? 'Hide' : 'Show'}
-                          </button>
+                          <input name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={update} placeholder="Re-enter your password" required />
+                          <button type="button" onClick={() => setShowConfirmPassword(v => !v)}>{showConfirmPassword ? 'Hide' : 'Show'}</button>
                         </span>
                         {form.confirmPassword.length > 0 && (
-                          <div className={`sa-password-match ${passwordsMatch ? 'valid' : 'invalid'}`} aria-live="polite">
+                          <div className={`sa-password-match ${passwordsMatch ? 'valid' : 'invalid'}`}>
                             {passwordsMatch ? '✓ Passwords match' : '✗ Passwords do not match'}
                           </div>
                         )}
                       </label>
-
                       <label className="sa-terms">
-                        <input name="agree" type="checkbox" checked={form.agree} onChange={update} />
-                        I agree to the student portal terms.
+                        <input name="agree" type="checkbox" checked={form.agree} onChange={update} /> I agree to the terms.
                       </label>
                     </>
                   )}
@@ -274,26 +244,18 @@ export default function StudentAccess() {
                     <button className="sa-forgot" type="button" onClick={() => switchMode('forgot')}>Forgot password?</button>
                   )}
 
-                  {validationError && <p className="sa-message error" role="alert">{validationError}</p>}
+                  {validationError && <p className="sa-message error">{validationError}</p>}
 
                   <button className="sa-submit" type="submit" disabled={isLoading}>
-                    {isLoading 
-                      ? 'Please wait…' 
-                      : mode === 'login' 
-                        ? 'Sign in to portal →' 
-                        : mode === 'register' 
-                          ? 'Create student account →' 
-                          : 'Send reset instructions →'}
+                    {isLoading ? 'Please wait…' : mode === 'login' ? 'Sign in →' : mode === 'register' ? 'Create account →' : 'Send Reset Link →'}
                   </button>
 
                   {mode === 'forgot' && (
-                    <button className="sa-back" type="button" onClick={() => switchMode('forgot')}>Back to sign in</button>
+                    <button className="sa-back" type="button" onClick={() => switchMode('login')}>Back to sign in</button>
                   )}
                 </form>
 
-                <p className="sa-bottom">
-                  Need help? <a href="/contact" onClick={closeStudentAccess}>Contact our team</a>
-                </p>
+                <p className="sa-bottom">Need help? <a href="/contact" onClick={closeStudentAccess}>Contact our team</a></p>
               </div>
             </motion.section>
           </motion.div>

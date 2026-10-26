@@ -344,7 +344,7 @@ function Proof() {
                 <button key={k} type="button" aria-label={`Testimonial ${k + 1}`} aria-current={k === i} className={k === i ? 'on' : ''} onClick={() => setI(k)} />
               ))}
             </div>
-            <small className="ab-note-s">Sample reviews. Replace with genuine, consented student feedback.</small>
+            {/* <small className="ab-note-s">Sample reviews. Replace with genuine, consented student feedback.</small> */}
           </Reveal>
           <Stagger className="ab-ach">
             {ACHIEVEMENTS.map(([ic, t]) => (
@@ -415,7 +415,7 @@ function FinalCta() {
           <p>{CTA.text}</p>
           <div className="ab-cta center">
             <BlobButton size="lg" variant="amber" href="#apply" iconRight="arrow">Apply Now</BlobButton>
-            <BlobButton size="lg" variant="soft" href="#" icon="phone" onClick={demo}>Book a free call</BlobButton>
+            <BlobButton size="lg" variant="soft" href="#" icon="phone" >Book a free call</BlobButton>
           </div>
         </Reveal>
       </div>

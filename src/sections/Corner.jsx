@@ -87,7 +87,7 @@ export default function Corner() {
               <h3><Icon name="msg" />Counselling and support</h3>
               <div className="kv">
                 <div><span>Free counselling call</span><b>Before you apply</b></div>
-                <div><span>Support hours</span><b>Mon to Sat, 10 AM to 6 PM</b></div>
+                <div><span>Support hours</span><b>Available 24/7</b></div>
               </div>
               <div style={{ marginTop: 16 }}>
                 <BlobButton variant="soft" size="sm" href="#apply" onClick={() => setProgram('Not sure (counselling)')}>Book a counselling call</BlobButton>
