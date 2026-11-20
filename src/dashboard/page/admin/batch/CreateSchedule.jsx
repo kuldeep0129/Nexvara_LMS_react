@@ -8,6 +8,7 @@ import { batchScheduleService } from '../../../services/batchScheduleService';
 import { batchService } from '../../../services/batchService';
 import ToastNotification from '../../../../ui/ToastNotification';
 
+// C# DayOfWeek Enum mapping (0 = Sunday, 1 = Monday, etc.)
 const DAYS_OF_WEEK = [
   { value: '0', label: 'Sunday' },
   { value: '1', label: 'Monday' },
@@ -18,7 +19,7 @@ const DAYS_OF_WEEK = [
   { value: '6', label: 'Saturday' },
 ];
 
-// Assuming standard Enum values for ClassType (Check backend to confirm exact numbers)
+// C# ScheduleClassType Enum mapping
 const CLASS_TYPES = [
   { value: '1', label: 'Online Class' },
   { value: '2', label: 'Offline Class' },
@@ -30,12 +31,10 @@ export default function CreateSchedule() {
   
   const [formData, setFormData] = useState({
     batchId: '',
-    dayOfWeek: '1', // Monday
-    startDate: '',
-    endDate: '',
+    dayOfWeek: '1', // Default Monday
     startTime: '',
     endTime: '',
-    classType: '1', // Online
+    classType: '1', // Default Online
     meetingLink: '',
   });
 
@@ -78,19 +77,17 @@ export default function CreateSchedule() {
     setError('');
 
     try {
-      // 1. Format Time to TimeSpan format ("HH:mm:00")
-      const formatTime = (timeStr) => {
+      // Format Time to TimeSpan ("HH:mm:00") - Required by C# DTO
+      const formatTimeSpan = (timeStr) => {
         if (!timeStr) return "00:00:00";
         return timeStr.length === 5 ? `${timeStr}:00` : timeStr;
       };
 
-      // 2. Prepare payload according to DTO
+      // Prepare payload exactly according to CreateBatchScheduleDto
       const payload = {
-        dayOfWeek: Number(formData.dayOfWeek),
-        startDate: new Date(formData.startDate).toISOString(),
-        endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
-        startTime: formatTime(formData.startTime),
-        endTime: formatTime(formData.endTime),
+        dayOfWeek: Number(formData.dayOfWeek), 
+        startTime: formatTimeSpan(formData.startTime),
+        endTime: formatTimeSpan(formData.endTime),
         classType: Number(formData.classType),
         meetingLink: formData.meetingLink || null,
       };
@@ -184,14 +181,7 @@ export default function CreateSchedule() {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Start Date *</label>
-                <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-[#7c3aed] outline-none text-sm text-gray-700" />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-1.5 block">End Date (Optional)</label>
-                <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-[#7c3aed] outline-none text-sm text-gray-700" />
-              </div>
+              
               <div>
                 <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Start Time *</label>
                 <div className="relative">

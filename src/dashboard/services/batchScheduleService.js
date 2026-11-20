@@ -67,19 +67,20 @@ export const batchScheduleService = {
     }
     return resData;
   },
-    getScheduleById: async (id) => {
-    if (!id) throw new Error('Schedule ID is missing.');
-    const url = `${API_BASE}/Batch/Get-ById-BatchSchedule/${id}`;
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: getHeaders(),
-    });
-    
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || 'Failed to fetch schedule details.');
-    return data;
-  },
+  // Get Schedule By Id (For Edit Modal)
+getScheduleById: async (id) => {
+  if (!id) throw new Error('Schedule ID is required.');
+  const url = `${API_BASE}/Batch/Get-ById-BatchSchedule/${id}`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+  
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.message || 'Failed to fetch schedule details.');
+  return data;
+},
   updateSchedule: async (batchId, scheduleId, payload) => {
     if (!batchId || !scheduleId) throw new Error('Batch ID and Schedule ID are required.');
     

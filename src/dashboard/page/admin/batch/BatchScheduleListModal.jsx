@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Calendar, Clock, Video, Users, AlertCircle } from 'lucide-react';
 import { batchScheduleService } from '../../../services/batchScheduleService';
+import { formatDisplayDate, formatTime } from '../../../data/dateHelpers';
 
 export default function BatchScheduleListModal({ isOpen, batchId, batchName, onClose }) {
   const [schedules, setSchedules] = useState([]);
@@ -31,32 +32,31 @@ export default function BatchScheduleListModal({ isOpen, batchId, batchName, onC
 
   if (!isOpen) return null;
 
-  const formatTime = (timeString) => {
-    if (!timeString) return 'N/A';
-    const [hour, minute] = timeString.split(':');
-    const h = parseInt(hour, 10);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    return `${h % 12 || 12}:${minute} ${ampm}`;
-  };
-
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         />
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
             <div>
               <h2 className="text-xl font-bold text-gray-800">Batch Schedules</h2>
-              <p className="text-sm text-gray-500">All class schedules for <span className="font-semibold text-[#7c3aed]">{batchName || `Batch ID: ${batchId}`}</span></p>
+              <p className="text-sm text-gray-500">
+                All class schedules for{' '}
+                <span className="font-semibold text-[#7c3aed]">
+                  {batchName || `Batch ID: ${batchId}`}
+                </span>
+              </p>
             </div>
             <button onClick={onClose} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
               <X size={24} />
@@ -101,18 +101,23 @@ export default function BatchScheduleListModal({ isOpen, batchId, batchName, onC
                             {schedule.dayOfWeek || 'N/A'}
                           </span>
                         </td>
-                        <td className="p-4 text-sm text-gray-700 flex items-center gap-1.5 mt-2">
-                          <Clock size={14} className="text-gray-400"/> {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
+                        <td className="p-4">
+                          <div className="flex items-center gap-1.5 text-sm text-gray-700">
+                            <Clock size={14} className="text-gray-400" />
+                            {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
+                          </div>
                         </td>
                         <td className="p-4">
                           <div className="flex flex-col gap-1 text-xs text-gray-600">
-                            <span>From: {schedule.startDate ? new Date(schedule.startDate).toLocaleDateString() : 'N/A'}</span>
-                            <span>To: {schedule.endDate ? new Date(schedule.endDate).toLocaleDateString() : 'N/A'}</span>
+                            <span>From: {formatDisplayDate(schedule.startDate)}</span>
+                            <span>To: {schedule.endDate ? formatDisplayDate(schedule.endDate) : 'N/A'}</span>
                           </div>
                         </td>
                         <td className="p-4">
                           <span className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                            {schedule.classType === 'Online' || schedule.classType === '1' ? <Video size={14} className="text-blue-500"/> : <Users size={14} className="text-orange-500"/>}
+                            {String(schedule.classType).toLowerCase() === 'online' || schedule.classType === 1 || schedule.classType === '1'
+                              ? <Video size={14} className="text-blue-500" />
+                              : <Users size={14} className="text-orange-500" />}
                             {schedule.classType || 'N/A'}
                           </span>
                         </td>

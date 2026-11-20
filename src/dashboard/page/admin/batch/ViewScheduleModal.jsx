@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, Loader2, Calendar, Clock, Users, Video, CheckCircle2, XCircle, 
-  ExternalLink, BookOpen, AlertCircle 
+import {
+  X, Loader2, Calendar, Clock, Users, Video, CheckCircle2, XCircle,
+  ExternalLink, BookOpen, AlertCircle
 } from 'lucide-react';
 import { batchScheduleService } from '../../../services/batchScheduleService';
+import { formatDisplayDate, formatTime } from '../../../data/dateHelpers';
 
 export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
   const [schedule, setSchedule] = useState(null);
@@ -32,40 +33,29 @@ export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
 
   if (!isOpen) return null;
 
-  // Helper functions
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  };
-
-  const formatTime = (timeString) => {
-    if (!timeString) return 'N/A';
-    const [hour, minute] = timeString.split(':');
-    const h = parseInt(hour, 10);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    return `${h % 12 || 12}:${minute} ${ampm}`;
-  };
-
   const getClassTypeName = (type) => {
-    // Enum mapping: 1 = Online, 2 = Offline, 3 = Recorded (Adjust based on your backend)
     const types = { 1: 'Online Class', 2: 'Offline Class', 3: 'Recorded' };
+    if (typeof type === 'string') {
+      const t = type.toLowerCase().trim();
+      if (t === 'online' || t === 'online class' || t === '1') return 'Online Class';
+      if (t === 'offline' || t === 'offline class' || t === '2') return 'Offline Class';
+      if (t === 'recorded' || t === '3') return 'Recorded';
+    }
     return types[type] || type || 'N/A';
   };
 
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        {/* Backdrop */}
-        <motion.div 
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         />
 
-        {/* Modal Content */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }} 
-          animate={{ opacity: 1, scale: 1, y: 0 }} 
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         >
@@ -99,13 +89,12 @@ export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
               </div>
             ) : schedule ? (
               <div className="space-y-6">
-                
-                {/* Top Banner (Batch & Status) */}
+                {/* Top Banner */}
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Batch Name</p>
                     <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                      <BookOpen size={18} className="text-[#7c3aed]" /> 
+                      <BookOpen size={18} className="text-[#7c3aed]" />
                       {schedule.batchName || 'N/A'}
                     </h3>
                   </div>
@@ -122,25 +111,23 @@ export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
                   </div>
                 </div>
 
-                {/* Grid Details */}
+                {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  
-                  {/* Day */}
                   <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Day of Week</p>
                     <p className="font-semibold text-gray-800 text-base capitalize">{schedule.dayOfWeek || 'N/A'}</p>
                   </div>
 
-                  {/* Class Type */}
                   <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Class Type</p>
                     <p className="font-semibold text-gray-800 text-base flex items-center gap-2">
-                      {getClassTypeName(schedule.classType) === 'Online Class' ? <Video size={16} className="text-blue-500"/> : <Users size={16} className="text-orange-500"/>}
+                      {getClassTypeName(schedule.classType) === 'Online Class'
+                        ? <Video size={16} className="text-blue-500" />
+                        : <Users size={16} className="text-orange-500" />}
                       {getClassTypeName(schedule.classType)}
                     </p>
                   </div>
 
-                  {/* Time */}
                   <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Time Slot</p>
                     <p className="font-semibold text-gray-800 text-base flex items-center gap-2">
@@ -149,23 +136,22 @@ export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
                     </p>
                   </div>
 
-                  {/* Dates */}
                   <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-1">Duration</p>
                     <p className="font-semibold text-gray-800 text-sm">
-                      {formatDate(schedule.startDate)} {schedule.endDate ? ` to ${formatDate(schedule.endDate)}` : '(Ongoing)'}
+                      {formatDisplayDate(schedule.startDate)}
+                      {schedule.endDate ? ` to ${formatDisplayDate(schedule.endDate)}` : ' (Ongoing)'}
                     </p>
                   </div>
-
                 </div>
 
                 {/* Meeting Link */}
                 {schedule.meetingLink && (
                   <div className="bg-purple-50 p-5 rounded-2xl border border-purple-100">
                     <p className="text-xs font-bold text-purple-500 uppercase mb-2">Meeting Link</p>
-                    <a 
-                      href={schedule.meetingLink} 
-                      target="_blank" 
+                    <a
+                      href={schedule.meetingLink}
+                      target="_blank"
                       rel="noreferrer"
                       className="flex items-center gap-2 text-[#7c3aed] font-semibold hover:underline break-all"
                     >
@@ -173,7 +159,6 @@ export default function ViewScheduleModal({ isOpen, scheduleId, onClose }) {
                     </a>
                   </div>
                 )}
-
               </div>
             ) : null}
           </div>

@@ -204,7 +204,7 @@ export default function AddCourse() {
 
               <div>
                 <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Duration</label>
-                <input type="text" name="duration" value={formData.duration} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-[#7c3aed] outline-none" placeholder="e.g. 6 Months" />
+                <input type="text" name="duration" value={formData.duration} onChange={handleChange} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-[#7c3aed] outline-none" placeholder="e.g. 6 weeks" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-700 mb-1.5 block">Level</label>

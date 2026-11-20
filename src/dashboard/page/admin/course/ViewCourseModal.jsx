@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Loader2, BookOpen, Clock, BarChart, Star, CheckCircle2, XCircle } from 'lucide-react';
+import { X, Loader2, BookOpen, Clock, BarChart, Star, CheckCircle2, XCircle, Tag } from 'lucide-react';
 import { courseService } from '../../../services/courseService';
 
 export default function ViewCourseModal({ courseId, onClose }) {
@@ -21,6 +21,8 @@ export default function ViewCourseModal({ courseId, onClose }) {
     };
     if (courseId) fetchCourse();
   }, [courseId]);
+
+  const isFree = course?.courseType?.toLowerCase() === 'free';
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -44,9 +46,25 @@ export default function ViewCourseModal({ courseId, onClose }) {
                 <div className="w-32 h-24 rounded-xl bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
                   {course.imageUrl ? <img src={course.imageUrl} className="w-full h-full object-cover" /> : <BookOpen className="m-auto mt-6 text-gray-300" size={32} />}
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-800">{course.title}</h1>
-                  <p className="text-sm text-gray-500 font-mono mt-1">/{course.slug}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h1 className="text-2xl font-bold text-gray-800">{course.title}</h1>
+                      <p className="text-sm text-gray-500 font-mono mt-1">/{course.slug}</p>
+                    </div>
+                    {/* Prominent Price Badge */}
+                    {isFree ? (
+                      <div className="shrink-0 flex flex-col items-center justify-center px-4 py-2 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 shadow-lg shadow-green-500/30">
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-white/90">Price</span>
+                        <span className="text-lg font-extrabold text-white leading-tight">Free</span>
+                      </div>
+                    ) : (
+                      <div className="shrink-0 flex flex-col items-center justify-center px-4 py-2 rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] shadow-lg shadow-purple-500/30">
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-white/90">Price</span>
+                        <span className="text-lg font-extrabold text-white leading-tight">₹{course.price ?? 'N/A'}</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex gap-2 mt-3">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${course.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                       {course.isActive ? 'Active' : 'Inactive'}
@@ -55,6 +73,9 @@ export default function ViewCourseModal({ courseId, onClose }) {
                       {course.isPublished ? 'Published' : 'Draft'}
                     </span>
                     {course.isFeatured && <span className="px-2 py-1 rounded text-xs font-bold bg-yellow-100 text-yellow-700">Featured</span>}
+                    <span className={`px-2 py-1 rounded text-xs font-bold flex items-center gap-1 ${isFree ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}>
+                      <Tag size={11} /> {isFree ? 'Free' : 'Paid'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -62,11 +83,20 @@ export default function ViewCourseModal({ courseId, onClose }) {
               <hr className="border-gray-100" />
 
               {/* Grid Info */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><Clock size={14}/> Duration</span> <p className="font-semibold text-gray-800">{course.duration || 'N/A'}</p></div>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><Clock size={14}/> Duration (weeks)</span> <p className="font-semibold text-gray-800">{course.duration  || 'N/A'}</p></div>
                 <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><BarChart size={14}/> Level</span> <p className="font-semibold text-gray-800">{course.level || 'N/A'}</p></div>
                 <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><Star size={14}/> Rating</span> <p className="font-semibold text-gray-800">{course.star} / 5</p></div>
                 <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500">Demand</span> <p className="font-semibold text-gray-800">{course.demand || 'N/A'}</p></div>
+                {/* Price card */}
+                <div className={`p-3 rounded-xl ${isFree ? 'bg-green-50' : 'bg-purple-50'}`}>
+                  <span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><Tag size={14}/> Price</span>
+                  {isFree ? (
+                    <p className="font-semibold text-green-700">Free</p>
+                  ) : (
+                    <p className="font-semibold text-purple-700">₹{course.price ?? 'N/A'}</p>
+                  )}
+                </div>
               </div>
 
               {/* Description & Points */}

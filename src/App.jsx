@@ -31,7 +31,17 @@ import StudentBatches from './dashboard/page/student/MyBatches.jsx';
 import ExploreCourses from "./dashboard/page/student/courses/ExploreCourses.jsx";
 import MyBatches from "./dashboard/page/student/batch/MyBatch.jsx";
 import ContinueLearning from "./dashboard/page/student/courses/ContinueLearning.jsx";
-import ProgressPage from "./dashboard/page/student/courses/ProgresPage.jsx";
+import ProgressPage from "./dashboard/component/ui/UnderDevelopment.jsx";
+import RewatchLesson from './dashboard/page/student/courses/RewatchLesson.jsx';
+import LiveClass from "./dashboard/page/student/courses/LiveClass.jsx";
+import StudyMaterial from "./dashboard/page/student/courses/StudyMaterial.jsx";
+import UpcommingAssesment from "./dashboard/page/student/assestment/UpcomingAssessment.jsx";
+import AvailableAssessments from "./dashboard/page/student/assestment/Available.jsx";
+import ResultAssessments from "./dashboard/page/student/assestment/ResultAssestment.jsx";
+import StudentAttendance from "./dashboard/page/student/attendance/Attendance.jsx";
+import StudentCertificates from "./dashboard/page/student/certificate/Certificates.jsx";
+import StudentPayments from "./dashboard/page/student/payment/StudentPayment.jsx";
+import ClassroomPage  from "../src/dashboard/page/student/courses/RewatchLesson.jsx";
 
 
 // ==========================================
@@ -40,6 +50,9 @@ import ProgressPage from "./dashboard/page/student/courses/ProgresPage.jsx";
 import TeacherLayout from './dashboard/page/teacher/TeacherLayout.jsx';
 import TeacherDashboard from './dashboard/page/teacher/Dashboard.jsx';
 import TeacherBatches from './dashboard/page/teacher/MyBatches.jsx';
+import TeacherActiveBatches from './dashboard/page/teacher/batch/TeacherActiveBatches.jsx';
+import TeacherUpcomingBatches from './dashboard/page/teacher/batch/TeacherUpcomingBatches.jsx'
+import TeacherCompletedBatches from './dashboard/page/teacher/batch/TeacherCompletedBatches.jsx'
 
 // ==========================================
 // ADMIN IMPORTS
@@ -51,6 +64,7 @@ import TeachersList from './dashboard/page/admin/TeachersList.jsx';
 import StudentsList from './dashboard/page/admin/StudentsList.jsx';
 import AllUsersList from './dashboard/page/admin/AllUsersList.jsx';
 import AddCourse from './dashboard/page/admin/course/AddCourse.jsx';
+import ManageCourse from './dashboard/page/admin/course/ManageCourse.jsx';
 import AllCourses from './dashboard/page/admin/course/AllCourses.jsx';
 import DraftCourses from './dashboard/page/admin/course/DraftCourses.jsx';
 import PublishedCourses from './dashboard/page/admin/course/PublishedCourses.jsx';
@@ -93,25 +107,16 @@ export default function App() {
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/contact" element={<ContactPage />} />
-
           {/* Unknown public URLs */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-
+          <Route path="*" element={<NotFound />} /> </Route>
         {/* Email Verification - Without Public Header/Footer */}
-        <Route
-          path="/confirm-email"
-          element={<EmailVerification />}
-        />
+        <Route path="/confirm-email"   element={<EmailVerification />}     />
 
         {/* ==========================================
             NAYA ROUTE: Reset Password Page 
             (Email link se aane wale users ke liye)
         ========================================== */}
-        <Route 
-          path="/reset-password" 
-          element={<ResetPassword />} 
-        />
+        <Route path="/reset-password" element={<ResetPassword />}   />
 
         {/* ==========================================
             STUDENT DASHBOARD ROUTES (Protected)
@@ -137,13 +142,24 @@ export default function App() {
 
     <Route path="courses" element={<StudentBatches />} />
       <Route path="/student/progress" element={<ProgressPage />} />
+   <Route path="rewatch/:lessonId"element={<RewatchLesson />} />
+    <Route path="/student/live-class/:batchId/:lessonId" element={<LiveClass />} />
+      <Route path="/student/materials" element={<StudyMaterial />} />
+        <Route path="/student/assessments/upcoming" element={<UpcommingAssesment />} />
+            <Route path="/student/assessments/available" element={<AvailableAssessments />} />
+                 <Route path="/student/assessments/results" element={<ResultAssessments />} />
+                      <Route path="/student/attendance" element={<StudentAttendance />} />
+               <Route path="/student/certificates" element={<StudentCertificates />} />
+             <Route path="/student/payments" element={<StudentPayments />} />
+             
+
+    <Route path="/student/classroom/:batchId" element={<ClassroomPage />} />
 
 
     <Route path="explore" element={<ExploreCourses />} />
 
     <Route path="live" element={<div>Live Classes</div>} />
 
-    <Route path="certificates" element={<div>Certificates</div>} />
   </Route>
 </Route>
 
@@ -154,40 +170,20 @@ export default function App() {
        
 <Route element={<ProtectedRoute allowedRoles={['Trainer']} />}>
   <Route path="/teacher" element={<TeacherLayout />}>
-
     {/* Teacher Dashboard */}
     <Route index element={<TeacherDashboard />} />
-
     {/* Teacher Profile */}
-    <Route
-      path="profile"
-      element={<Profile role="teacher" />}
-    />
-
+    <Route path="profile"  element={<Profile role="teacher" />} />
     {/* Teacher Schedule */}
-    <Route
-      path="schedule"
-      element={<SchedulePage />}
-    />
-
+    <Route path="schedule" element={<SchedulePage />} />
     {/* Teacher Batches */}
-    <Route
-      path="batches"
-      element={<TeacherBatches />}
-    />
-
+    <Route path="batches/active"  element={<TeacherActiveBatches />} />
+        <Route path="batches/upcoming"  element={<TeacherUpcomingBatches />} />
+                <Route path="batches/completed"  element={<TeacherCompletedBatches />} />
     {/* Live Classes */}
-    <Route
-      path="live"
-      element={<div>Live Classes</div>}
-    />
-
+    <Route path="live"  element={<div>Live Classes</div>}  />
     {/* Assessments */}
-    <Route
-      path="assessments"
-      element={<div>Assessments</div>}
-    />
-
+    <Route path="assessments" element={<div>Assessments</div>}  />
   </Route>
 </Route>
 
@@ -210,6 +206,7 @@ export default function App() {
     {/* Courses */}
     <Route path="courses" element={<AllCourses />} />
     <Route path="courses/add" element={<AddCourse />} />
+    <Route path="courses/manage/:id" element={<ManageCourse />} />
   <Route path="courses/draft" element={<DraftCourses />} />
     <Route path="courses/published" element={<PublishedCourses />} />
 
