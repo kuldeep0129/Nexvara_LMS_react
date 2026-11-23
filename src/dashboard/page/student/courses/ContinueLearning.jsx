@@ -695,12 +695,26 @@ export default function ContinueLearning() {
     };
   }, [batches]);
 
-  const handleResume = (item) => {
-    if (!item?.batchId) return;
+ const handleResume = (item) => {
+  if (!item) return;
 
-    // Change this route according to your actual classroom route.
-    navigate(`/student/batches/${item.batchId}/learn`);
-  };
+  // moduleList se pehla videoId nikaalo
+  const videoId =
+    item?.moduleList?.[0]?.videoId ||
+    item?.moduleList?.[0]?.video?.[0]?.videoId ||
+    item?.videoId;
+
+  // Agar videoId mila to classroom/videoId?mode=rewatch
+  // if (videoId) {
+  //   navigate(`/student/classroom/${videoId}?mode=rewatch`);
+  //   return;
+  // }
+
+  // Fallback: batchId ke saath (purana behaviour)
+  if (item?.batchId) {
+    navigate(`/student/classroom/${item.batchId}?mode=rewatch`);
+  }
+};
 
   return (
     <div className="min-h-full bg-[#F8F9FD] px-3 py-5 sm:px-5 lg:px-7 lg:py-7">

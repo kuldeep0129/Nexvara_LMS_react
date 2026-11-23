@@ -72,4 +72,84 @@ export const studentService = {
       "Failed to fetch continue learning data."
     );
   },
+    getUpcomingLiveClasses: async ({
+    pageNumber = 1,
+    pageSize = 10,
+    signal,
+  } = {}) => {
+    const params = new URLSearchParams({
+      PageNumber: String(pageNumber),
+      PageSize: String(pageSize),
+    });
+
+    const response = await fetch(
+      `${API_BASE}/LiveClass/Get-Student-Upcoming-LiveClasses?${params.toString()}`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+        signal,
+      }
+    );
+
+    return readResponse(
+      response,
+      "Failed to fetch upcoming live classes."
+    );
+  },
+   // Logged-in student's class attendance history.
+  // StudentId is intentionally not sent from the frontend; backend reads it from JWT.
+  getMyClassAttendance: async ({
+    pageNumber = 1,
+    pageSize = 100,
+    signal,
+  } = {}) => {
+    const params = new URLSearchParams({
+      PageNumber: String(pageNumber),
+      PageSize: String(pageSize),
+    });
+
+    const response = await fetch(
+      `${API_BASE}/Student/Get-Student-My-Class-Attendance?${params.toString()}`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+        signal,
+      }
+    );
+
+    return readResponse(
+      response,
+      "Failed to fetch your attendance history."
+    );
+  },
+    // Student ID is intentionally not sent. Backend reads it from the JWT claim.
+  getMyCertificates: async ({ signal } = {}) => {
+    const response = await fetch(`${API_BASE}/Student/Get-My-Certificates`, {
+      method: "GET",
+      headers: getHeaders(),
+      signal,
+    });
+    return readResponse(response, "Failed to fetch your certificates.");
+  },
+
+  // Public verification endpoint. It does not require the student's JWT.
+  verifyCertificate: async (verificationCode) => {
+    const response = await fetch(
+      `${API_BASE}/Certificate/Verify/${encodeURIComponent(verificationCode)}`,
+      { method: "GET", headers: { Accept: "application/json" } }
+    );
+    return readResponse(response, "Certificate verification failed.");
+  },
+    getMyPayments: async ({ signal } = {}) => {
+    const response = await fetch(
+      `${API_BASE}/Student/Get-Studnet-My-Payment`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+        signal,
+      }
+    );
+
+    return readResponse(response, "Failed to fetch your payment history.");
+  },
 };

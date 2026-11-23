@@ -1,11 +1,8 @@
 import { useMemo, useState } from "react";
 import {
-  Search,
-  Filter,
   FileText,
   Download,
   Eye,
-  Star,
   Clock3,
   BookOpen,
   ChevronDown,
@@ -14,208 +11,41 @@ import {
   Code2,
   GraduationCap,
   FileQuestion,
-  X,
-  ArrowUpRight,
-  Sparkles,
-  CheckCircle2,
   PlayCircle,
   Layers3,
-  Bookmark,
-  MoreHorizontal,
+  Search,
+  X,
+  Sparkles,
+  TrendingUp,
+  FolderOpen,
+  RefreshCw,
+  Zap,
+  Inbox,
+  SlidersHorizontal
 } from "lucide-react";
 
-/* =========================================================
-   DEMO DATA
-========================================================= */
-
-const materials = [
-  {
-    id: 1,
-    title: "ASP.NET Core Web API Complete Notes",
-    description:
-      "Complete notes covering controllers, services, repositories, middleware and production API architecture.",
-    course: "ASP.NET Core Mastery",
-    module: "Web API Fundamentals",
-    type: "Notes",
-    format: "PDF",
-    size: "4.8 MB",
-    pages: 86,
-    uploadedAt: "2 days ago",
-    author: "Nexvara Faculty",
-    important: true,
-    progress: 72,
-    isNew: true,
-  },
-  {
-    id: 2,
-    title: "Entity Framework Core Cheat Sheet",
-    description:
-      "Quick reference for DbContext, migrations, relationships, LINQ queries and common EF Core commands.",
-    course: "ASP.NET Core Mastery",
-    module: "Entity Framework Core",
-    type: "Cheat Sheet",
-    format: "PDF",
-    size: "1.4 MB",
-    pages: 18,
-    uploadedAt: "3 days ago",
-    author: "Nexvara Faculty",
-    important: true,
-    progress: 100,
-    isNew: true,
-  },
-  {
-    id: 3,
-    title: "JWT Authentication Assignment",
-    description:
-      "Practice assignment covering JWT authentication, refresh tokens, authorization and secure API access.",
-    course: "ASP.NET Core Mastery",
-    module: "Authentication & Security",
-    type: "Assignment",
-    format: "PDF",
-    size: "780 KB",
-    pages: 12,
-    uploadedAt: "5 days ago",
-    author: "Rahul Sharma",
-    important: false,
-    progress: 25,
-    isNew: true,
-  },
-  {
-    id: 4,
-    title: "React Hooks & State Management",
-    description:
-      "Study material covering useState, useEffect, useMemo, useCallback and custom hooks.",
-    course: "React Advanced",
-    module: "React Hooks",
-    type: "Notes",
-    format: "PDF",
-    size: "3.2 MB",
-    pages: 54,
-    uploadedAt: "1 week ago",
-    author: "Nexvara Faculty",
-    important: true,
-    progress: 48,
-    isNew: false,
-  },
-  {
-    id: 5,
-    title: "React Interview Questions",
-    description:
-      "Frequently asked React interview questions with practical explanations and examples.",
-    course: "React Advanced",
-    module: "Interview Preparation",
-    type: "Interview Prep",
-    format: "PDF",
-    size: "2.1 MB",
-    pages: 42,
-    uploadedAt: "1 week ago",
-    author: "Nexvara Faculty",
-    important: false,
-    progress: 10,
-    isNew: false,
-  },
-  {
-    id: 6,
-    title: "REST API Design Guidelines",
-    description:
-      "Practical guidelines for designing scalable, secure and maintainable REST APIs.",
-    course: "ASP.NET Core Mastery",
-    module: "REST API",
-    type: "Guide",
-    format: "PDF",
-    size: "1.9 MB",
-    pages: 31,
-    uploadedAt: "8 days ago",
-    author: "Nexvara Faculty",
-    important: false,
-    progress: 100,
-    isNew: false,
-  },
-  {
-    id: 7,
-    title: "B.Tech Computer Science Syllabus",
-    description:
-      "Reference syllabus covering major B.Tech Computer Science subjects and academic topics.",
-    course: "B.Tech Guidance",
-    module: "Academic Guidance",
-    type: "Syllabus",
-    format: "PDF",
-    size: "2.7 MB",
-    pages: 64,
-    uploadedAt: "10 days ago",
-    author: "Nexvara Academic Team",
-    important: false,
-    progress: 0,
-    isNew: false,
-  },
-  {
-    id: 8,
-    title: "Data Structures Practice Questions",
-    description:
-      "Practice questions covering arrays, linked lists, stacks, queues, trees and graphs.",
-    course: "Interview Preparation",
-    module: "Data Structures",
-    type: "Question Bank",
-    format: "PDF",
-    size: "3.6 MB",
-    pages: 72,
-    uploadedAt: "12 days ago",
-    author: "Nexvara Faculty",
-    important: true,
-    progress: 35,
-    isNew: false,
-  },
-];
+import { useStudentStudyMaterials } from "../../../hooks/student/useStudentStudyMaterials";
 
 /* =========================================================
-   FILTER DATA
+   ICON MAP
 ========================================================= */
 
-const materialTypes = [
-  "All Materials",
-  "Notes",
-  "Assignment",
-  "Cheat Sheet",
-  "Interview Prep",
-  "Guide",
-  "Syllabus",
-  "Question Bank",
-];
-
-const courses = [
-  "All Courses",
-  "ASP.NET Core Mastery",
-  "React Advanced",
-  "B.Tech Guidance",
-  "Interview Preparation",
-];
-
-/* =========================================================
-   ICON
-========================================================= */
-
-function MaterialIcon({ type, size = 20 }) {
-  if (type === "Assignment") {
-    return <ClipboardList size={size} />;
+function MaterialIcon({ type, size = 20, className = "" }) {
+  const props = { size, className };
+  switch (type) {
+    case "Assignment":
+      return <ClipboardList {...props} />;
+    case "Interview Prep":
+      return <FileQuestion {...props} />;
+    case "Syllabus":
+      return <GraduationCap {...props} />;
+    case "Cheat Sheet":
+      return <Code2 {...props} />;
+    case "Question Bank":
+      return <FileCheck2 {...props} />;
+    default:
+      return <FileText {...props} />;
   }
-
-  if (type === "Interview Prep") {
-    return <FileQuestion size={size} />;
-  }
-
-  if (type === "Syllabus") {
-    return <GraduationCap size={size} />;
-  }
-
-  if (type === "Cheat Sheet") {
-    return <Code2 size={size} />;
-  }
-
-  if (type === "Question Bank") {
-    return <FileCheck2 size={size} />;
-  }
-
-  return <FileText size={size} />;
 }
 
 /* =========================================================
@@ -225,68 +55,60 @@ function MaterialIcon({ type, size = 20 }) {
 function getTypeStyle(type) {
   switch (type) {
     case "Assignment":
-      return "bg-blue-50 text-blue-600";
-
+      return "bg-blue-50 text-blue-600 ring-blue-100";
     case "Interview Prep":
-      return "bg-purple-50 text-purple-600";
-
+      return "bg-purple-50 text-purple-600 ring-purple-100";
     case "Syllabus":
-      return "bg-amber-50 text-amber-600";
-
+      return "bg-amber-50 text-amber-600 ring-amber-100";
     case "Cheat Sheet":
-      return "bg-cyan-50 text-cyan-600";
-
+      return "bg-cyan-50 text-cyan-600 ring-cyan-100";
     case "Question Bank":
-      return "bg-rose-50 text-rose-600";
-
+      return "bg-rose-50 text-rose-600 ring-rose-100";
     case "Guide":
-      return "bg-indigo-50 text-indigo-600";
-
+      return "bg-indigo-50 text-indigo-600 ring-indigo-100";
     default:
-      return "bg-emerald-50 text-emerald-600";
+      return "bg-emerald-50 text-emerald-600 ring-emerald-100";
   }
 }
 
 /* =========================================================
-   LIGHT BLOB BUTTON
+   BUTTON
 ========================================================= */
 
-function BlobButton({
+function Button({
   children,
   icon,
   variant = "primary",
+  size = "md",
   className = "",
   onClick,
+  ...rest
 }) {
   const variants = {
     primary:
-      "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300",
-
+      "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-emerald-200/60",
     secondary:
-      "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300",
+      "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm",
+    ghost: "bg-transparent text-slate-600 hover:bg-slate-100",
+    outline:
+      "bg-transparent text-emerald-700 border border-emerald-200 hover:bg-emerald-50",
+  };
 
-    soft:
-      "border border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100",
-
-    amber:
-      "border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100",
-
-    danger:
-      "border border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100",
+  const sizes = {
+    sm: "px-3 py-1.5 text-xs rounded-lg gap-1.5",
+    md: "px-4 py-2.5 text-sm rounded-xl gap-2",
+    lg: "px-5 py-3 text-sm rounded-xl gap-2",
   };
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 active:scale-[0.98] disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      {...rest}
     >
-      <span className="pointer-events-none absolute -right-5 -top-5 h-10 w-10 rounded-full bg-white/60 blur-md transition-all duration-300 group-hover:scale-150" />
-
-      <span className="relative z-10 flex items-center gap-2">
-        {icon}
-        {children}
-      </span>
+      {icon}
+      {children}
     </button>
   );
 }
@@ -295,18 +117,13 @@ function BlobButton({
    SELECT
 ========================================================= */
 
-function SelectBox({
-  value,
-  onChange,
-  options,
-  className = "",
-}) {
+function SelectBox({ value, onChange, options, className = "" }) {
   return (
     <div className={`relative ${className}`}>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-9 text-sm font-medium text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-9 text-sm font-medium text-slate-700 outline-none transition hover:border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
       >
         {options.map((item) => (
           <option key={item} value={item}>
@@ -314,7 +131,6 @@ function SelectBox({
           </option>
         ))}
       </select>
-
       <ChevronDown
         size={16}
         className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -324,75 +140,171 @@ function SelectBox({
 }
 
 /* =========================================================
+   HELPERS
+========================================================= */
+
+function formatFileSize(bytes) {
+  if (!bytes || bytes <= 0) return "Unknown size";
+  const units = ["Bytes", "KB", "MB", "GB"];
+  const index = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`;
+}
+
+function getFileActions(material) {
+  const fileUrl = material.fileUrl;
+  const view = () => {
+    if (fileUrl) window.open(fileUrl, "_blank", "noopener,noreferrer");
+  };
+  const download = () => {
+    if (!fileUrl) return;
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = material.title || "study-material";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  return { view, download, hasFile: !!fileUrl };
+}
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+function SectionHeading({ count, hasActiveFilters, onClear }) {
+  return (
+    <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="relative">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-gradient-to-r from-emerald-50 to-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-600 shadow-sm">
+          <Zap size={10} className="fill-emerald-500 text-emerald-500" />
+          Your Library
+        </div>
+
+        <h2 className="flex flex-wrap items-baseline gap-x-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          <span>Learning</span>
+          <span className="relative inline-block">
+            <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+              Resources
+            </span>
+            <span className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-70 blur-[1px]" />
+          </span>
+        </h2>
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            </span>
+            {count} available now
+          </span>
+          <span className="flex items-center gap-1 text-slate-400">
+            <TrendingUp size={13} className="text-emerald-500" />
+            Curated for your progress
+          </span>
+        </div>
+      </div>
+
+      {hasActiveFilters && (
+        <button
+          onClick={onClear}
+          className="group inline-flex items-center gap-1.5 self-start rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 sm:self-auto"
+        >
+          <X size={12} className="transition-transform group-hover:rotate-90" />
+          Reset Filters
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* =========================================================
    FEATURED MATERIAL
 ========================================================= */
 
 function FeaturedMaterial({ material }) {
-  return (
-    <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-white p-5 shadow-sm sm:p-6">
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald-100/60 blur-3xl" />
+  if (!material) return null;
+  const type = material.fileType || material.type;
+  const { view, download, hasFile } = getFileActions(material);
 
-      <div className="absolute -bottom-12 left-1/3 h-32 w-32 rounded-full bg-blue-100/40 blur-3xl" />
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-white p-5 shadow-sm sm:p-7">
+      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-emerald-200/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 left-1/4 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl" />
 
       <div className="relative">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-emerald-600 shadow-sm ring-1 ring-emerald-100">
-              <MaterialIcon type={material.type} />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-600 shadow-sm ring-1 ring-emerald-100">
+              <MaterialIcon type={type} size={22} />
             </div>
-
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+              <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-600">
+                <Sparkles size={12} />
                 Recommended for you
               </p>
-
-              <p className="mt-0.5 text-xs text-slate-400">
-                {material.course}
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                {material.courseName || material.course || "Course"}
               </p>
             </div>
           </div>
-
-          <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-emerald-600 shadow-sm ring-1 ring-emerald-100">
-            FEATURED
+          <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[10px] font-bold text-emerald-600 shadow-sm ring-1 ring-emerald-100">
+            ⭐ FEATURED
           </span>
         </div>
 
-        <h2 className="mt-5 max-w-2xl text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+        <h2 className="mt-5 max-w-2xl text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
           {material.title}
         </h2>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-          {material.description}
-        </p>
+        {material.description && (
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+            {material.description}
+          </p>
+        )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5">
-            <Layers3 size={14} />
-            {material.module}
-          </span>
-
-          <span className="flex items-center gap-1.5">
-            <FileText size={14} />
-            {material.pages} pages
-          </span>
-
-          <span>{material.size}</span>
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
+          {material.moduleName && (
+            <span className="flex items-center gap-1.5">
+              <Layers3 size={14} className="text-emerald-500" />
+              {material.moduleName}
+            </span>
+          )}
+          {material.pages && (
+            <span className="flex items-center gap-1.5">
+              <FileText size={14} className="text-emerald-500" />
+              {material.pages} pages
+            </span>
+          )}
+          {material.fileSize && (
+            <span className="flex items-center gap-1.5">
+              <FolderOpen size={14} className="text-emerald-500" />
+              {formatFileSize(material.fileSize)}
+            </span>
+          )}
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          <BlobButton
+        <div className="mt-6 flex flex-wrap items-center gap-2.5">
+          <Button
             variant="primary"
+            size="md"
             icon={<PlayCircle size={17} />}
+            onClick={view}
+            disabled={!hasFile}
           >
             Continue Reading
-          </BlobButton>
-
-          <BlobButton
+          </Button>
+          <Button
             variant="secondary"
+            size="md"
             icon={<Download size={16} />}
+            onClick={download}
+            disabled={!hasFile}
           >
             Download
-          </BlobButton>
+          </Button>
         </div>
       </div>
     </div>
@@ -404,178 +316,197 @@ function FeaturedMaterial({ material }) {
 ========================================================= */
 
 function MaterialCard({ material }) {
-  const typeStyle = getTypeStyle(material.type);
+  const typeStyle = getTypeStyle(material.fileType);
+  const { view, download, hasFile } = getFileActions(material);
 
   return (
-    <article className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-200/50 sm:p-5">
-      <div className="flex gap-4">
-        {/* Icon */}
+    <article className="group relative flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg sm:p-5">
+      <div className="flex items-start gap-3">
         <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${typeStyle}`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ring-1 ${typeStyle}`}
         >
-          <MaterialIcon type={material.type} />
+          <MaterialIcon type={material.fileType} size={19} />
         </div>
-
         <div className="min-w-0 flex-1">
-          {/* Top */}
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-bold text-slate-900 sm:text-base">
-                  {material.title}
-                </h3>
-
-                {material.isNew && (
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
-                    NEW
-                  </span>
-                )}
-
-                {material.important && (
-                  <Star
-                    size={14}
-                    className="text-amber-400"
-                    fill="currentColor"
-                  />
-                )}
-              </div>
-
-              <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500 sm:text-sm">
-                {material.description}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 sm:flex"
-            >
-              <MoreHorizontal size={18} />
-            </button>
-          </div>
-
-          {/* Meta */}
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-slate-400 sm:text-xs">
-            <span className="flex items-center gap-1.5 font-medium text-slate-500">
-              <BookOpen size={13} />
-              {material.course}
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <Layers3 size={13} />
-              {material.module}
-            </span>
-
-            <span>{material.format}</span>
-
-            <span>{material.size}</span>
-
-            <span>{material.pages} pages</span>
-
-            <span className="flex items-center gap-1.5">
-              <Clock3 size={13} />
-              {material.uploadedAt}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <h3 className="truncate text-sm font-bold text-slate-900 sm:text-base">
+              {material.title}
+            </h3>
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600 ring-1 ring-emerald-100">
+              PUBLISHED
             </span>
           </div>
-
-          {/* Progress */}
-          {material.progress > 0 && (
-            <div className="mt-4 max-w-md">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-[11px] font-medium text-slate-400">
-                  {material.progress === 100
-                    ? "Completed"
-                    : "Reading progress"}
-                </span>
-
-                <span
-                  className={`text-[11px] font-bold ${
-                    material.progress === 100
-                      ? "text-emerald-600"
-                      : "text-slate-600"
-                  }`}
-                >
-                  {material.progress}%
-                </span>
-              </div>
-
-              <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    material.progress === 100
-                      ? "bg-emerald-500"
-                      : "bg-emerald-400"
-                  }`}
-                  style={{
-                    width: `${material.progress}%`,
-                  }}
-                />
-              </div>
-            </div>
+          {material.fileType && (
+            <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+              {material.fileType}
+            </p>
           )}
-
-          {/* Bottom */}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <BlobButton
-              variant="primary"
-              className="rounded-xl px-3 py-2 text-xs"
-              icon={<Eye size={14} />}
-            >
-              {material.progress > 0 &&
-              material.progress < 100
-                ? "Continue"
-                : "View"}
-            </BlobButton>
-
-            <BlobButton
-              variant="secondary"
-              className="rounded-xl px-3 py-2 text-xs"
-              icon={<Download size={14} />}
-            >
-              Download
-            </BlobButton>
-
-            <button
-              type="button"
-              className="ml-auto hidden items-center gap-1 rounded-lg px-2 py-2 text-xs font-semibold text-slate-400 transition hover:bg-emerald-50 hover:text-emerald-600 md:flex"
-            >
-              Details
-              <ArrowUpRight size={13} />
-            </button>
-          </div>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-500">
+        {material.courseName && (
+          <span className="flex items-center gap-1.5">
+            <BookOpen size={13} className="text-slate-400" />
+            {material.courseName}
+          </span>
+        )}
+        {material.moduleName && (
+          <span className="flex items-center gap-1.5">
+            <Layers3 size={13} className="text-slate-400" />
+            {material.moduleName}
+          </span>
+        )}
+        {material.batchName && (
+          <span className="flex items-center gap-1.5">
+            <GraduationCap size={13} className="text-slate-400" />
+            {material.batchName}
+          </span>
+        )}
+        <span className="flex items-center gap-1.5">
+          <FolderOpen size={13} className="text-slate-400" />
+          {formatFileSize(material.fileSize)}
+        </span>
+      </div>
+
+      <div className="mt-auto flex flex-wrap gap-2 pt-1">
+        <Button
+          variant="primary"
+          size="sm"
+          icon={<Eye size={14} />}
+          onClick={view}
+          disabled={!hasFile}
+        >
+          View
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<Download size={14} />}
+          onClick={download}
+          disabled={!hasFile}
+        >
+          Download
+        </Button>
       </div>
     </article>
   );
 }
 
 /* =========================================================
-   EMPTY STATE
+   SKELETON
 ========================================================= */
 
-function EmptyState({ clearFilters }) {
+function CardSkeleton() {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
-        <FileText size={28} />
+    <div className="animate-pulse rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="flex gap-3">
+        <div className="h-11 w-11 rounded-xl bg-slate-200" />
+        <div className="flex-1 space-y-2">
+          <div className="h-3.5 w-2/3 rounded bg-slate-200" />
+          <div className="h-3 w-1/3 rounded bg-slate-100" />
+        </div>
+      </div>
+      <div className="mt-4 h-3 w-1/2 rounded bg-slate-100" />
+      <div className="mt-4 flex gap-2">
+        <div className="h-7 w-16 rounded-lg bg-slate-200" />
+        <div className="h-7 w-20 rounded-lg bg-slate-100" />
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   PROFESSIONAL EMPTY STATE (CIRCLE ME JO UI HAI)
+========================================================= */
+
+function EmptyState({ clearFilters, onRefresh, isFilterActive }) {
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-20 shadow-sm">
+      {/* Background Subtle Pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.03]" 
+           style={{ backgroundImage: 'radial-gradient(#10b981 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
       </div>
 
-      <h3 className="mt-5 text-lg font-bold text-slate-900">
-        No materials found
-      </h3>
+      <div className="relative z-10 flex flex-col items-center text-center">
+        {/* Premium Icon Box */}
+        <div className="relative mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-slate-50 shadow-sm ring-1 ring-slate-100">
+          <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-emerald-100/50 to-transparent opacity-50" />
+          <Inbox size={40} className="text-slate-400" strokeWidth={1.5} />
+          <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-100">
+            <Search size={14} className="text-slate-400" />
+          </div>
+        </div>
 
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-        We couldn't find any study material matching your
-        current filters. Try another course, material type or
-        search term.
-      </p>
+        {/* Typography */}
+        <h3 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+          No materials found
+        </h3>
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
+          {isFilterActive 
+            ? "We couldn't find any study material matching your current filters. Try adjusting your search or resetting the filters."
+            : "Your library is currently empty. Please check back later or refresh to load your study materials."}
+        </p>
 
-      <div className="mt-5 flex justify-center">
-        <BlobButton
-          variant="secondary"
-          onClick={clearFilters}
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row w-full sm:w-auto">
+          {isFilterActive && (
+            <Button
+              variant="primary"
+              size="md"
+              icon={<SlidersHorizontal size={16} />}
+              onClick={clearFilters}
+              className="w-full sm:w-auto"
+            >
+              Clear All Filters
+            </Button>
+          )}
+          <Button
+            variant={isFilterActive ? "secondary" : "primary"}
+            size="md"
+            icon={<RefreshCw size={16} />}
+            onClick={onRefresh}
+            className="w-full sm:w-auto"
+          >
+            Refresh Library
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   STAT CARD
+========================================================= */
+
+function StatCard({ title, value, icon, accent = "emerald" }) {
+  const accents = {
+    emerald: "from-emerald-500/10 to-emerald-500/0 text-emerald-600",
+    blue: "from-blue-500/10 to-blue-500/0 text-blue-600",
+    purple: "from-purple-500/10 to-purple-500/0 text-purple-600",
+    amber: "from-amber-500/10 to-amber-500/0 text-amber-600",
+  };
+
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-slate-300 hover:shadow-md sm:p-5">
+      <div
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100 ${accents[accent]}`}
+      />
+      <div className="relative flex items-center justify-between">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+            {title}
+          </p>
+          <p className="mt-1.5 text-2xl font-bold text-slate-900">{value}</p>
+        </div>
+        <div
+          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 ${accents[
+            accent
+          ].split(" ").pop()}`}
         >
-          Clear Filters
-        </BlobButton>
+          {icon}
+        </div>
       </div>
     </div>
   );
@@ -586,667 +517,263 @@ function EmptyState({ clearFilters }) {
 ========================================================= */
 
 export default function StudyMaterial() {
+  const {
+    materials = [],
+    total = 0,
+    isLoading,
+    error,
+    fetchStudyMaterials,
+  } = useStudentStudyMaterials();
+
   const [search, setSearch] = useState("");
   const [course, setCourse] = useState("All Courses");
   const [type, setType] = useState("All Materials");
-  const [importantOnly, setImportantOnly] =
-    useState(false);
-  const [activeTab, setActiveTab] = useState("All");
 
-  /* =======================================================
-     FILTERING
-  ======================================================= */
+  const courseOptions = useMemo(
+    () => [
+      "All Courses",
+      ...new Set(materials.map((item) => item.courseName).filter(Boolean)),
+    ],
+    [materials]
+  );
+
+  const materialTypeOptions = useMemo(
+    () => [
+      "All Materials",
+      ...new Set(materials.map((item) => item.fileType).filter(Boolean)),
+    ],
+    [materials]
+  );
 
   const filteredMaterials = useMemo(() => {
     return materials.filter((item) => {
-      const searchText =
-        `${item.title} ${item.description} ${item.course} ${item.module}`.toLowerCase();
+      const searchText = [
+        item.title,
+        item.courseName,
+        item.batchName,
+        item.moduleName,
+        item.fileType,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
       const matchesSearch =
-        !search ||
-        searchText.includes(search.toLowerCase());
-
+        !search || searchText.includes(search.toLowerCase());
       const matchesCourse =
-        course === "All Courses" ||
-        item.course === course;
-
+        course === "All Courses" || item.courseName === course;
       const matchesType =
-        type === "All Materials" ||
-        item.type === type;
+        type === "All Materials" || item.fileType === type;
 
-      const matchesImportant =
-        !importantOnly || item.important;
-
-      const matchesTab =
-        activeTab === "All" ||
-        (activeTab === "Recent" && item.isNew) ||
-        (activeTab === "Important" && item.important) ||
-        (activeTab === "Completed" &&
-          item.progress === 100);
-
-      return (
-        matchesSearch &&
-        matchesCourse &&
-        matchesType &&
-        matchesImportant &&
-        matchesTab
-      );
+      return matchesSearch && matchesCourse && matchesType;
     });
-  }, [
-    search,
-    course,
-    type,
-    importantOnly,
-    activeTab,
-  ]);
-
-  /* =======================================================
-     STATS
-  ======================================================= */
-
-  const recentMaterials = materials.filter(
-    (item) => item.isNew
-  );
-
-  const importantMaterials = materials.filter(
-    (item) => item.important
-  );
-
-  const completedMaterials = materials.filter(
-    (item) => item.progress === 100
-  );
-
-  const featuredMaterial =
-    materials.find(
-      (item) =>
-        item.important &&
-        item.progress > 0 &&
-        item.progress < 100
-    ) || materials[0];
-
-  const averageProgress = Math.round(
-    materials.reduce(
-      (sum, item) => sum + item.progress,
-      0
-    ) / materials.length
-  );
-
-  /* =======================================================
-     CLEAR FILTERS
-  ======================================================= */
+  }, [materials, search, course, type]);
 
   const clearFilters = () => {
     setSearch("");
     setCourse("All Courses");
     setType("All Materials");
-    setImportantOnly(false);
-    setActiveTab("All");
   };
 
-  const hasFilters =
-    search ||
-    course !== "All Courses" ||
-    type !== "All Materials" ||
-    importantOnly ||
-    activeTab !== "All";
+  const uniqueCourses = useMemo(
+    () => new Set(materials.map((item) => item.courseId).filter(Boolean)).size,
+    [materials]
+  );
+  const uniqueBatches = useMemo(
+    () => new Set(materials.map((item) => item.batchId).filter(Boolean)).size,
+    [materials]
+  );
+  const uniqueModules = useMemo(
+    () => new Set(materials.map((item) => item.moduleId).filter(Boolean)).size,
+    [materials]
+  );
 
-  /* =======================================================
-     UI
-  ======================================================= */
+  const featuredMaterial = filteredMaterials[0];
+  const listMaterials = filteredMaterials.slice(1);
+  const hasActiveFilters =
+    search || course !== "All Courses" || type !== "All Materials";
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa]">
-      {/* ===================================================
-          HEADER
-      =================================================== */}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* ============ HERO HEADER ============ */}
+      <header className="relative overflow-hidden border-b border-slate-200 bg-white">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-100/50 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-blue-100/40 blur-3xl" />
 
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400">
-                <span>Student Dashboard</span>
-                <span>/</span>
-                <span className="text-slate-600">
-                  Learning Resources
-                </span>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-600 ring-1 ring-emerald-100">
+                <Sparkles size={11} />
+                Learning Hub
               </div>
-
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-                  Study Material
-                </h1>
-
-                <span className="hidden rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-600 sm:inline-flex">
-                  LEARNING HUB
-                </span>
-              </div>
-
-              <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-500">
-                Everything you need for your courses — notes,
-                assignments, interview preparation and academic
-                resources.
+              <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                Study Material
+              </h1>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">
+                Access your published course notes, assignments and learning
+                resources — all in one place.
               </p>
             </div>
 
-            {/* Progress */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-[11px] font-medium text-slate-400">
-                Overall Progress
-              </p>
-
-              <div className="mt-1 flex items-center gap-2">
-                <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="h-full rounded-full bg-emerald-500"
-                    style={{
-                      width: `${averageProgress}%`,
-                    }}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="md"
+                icon={
+                  <RefreshCw
+                    size={15}
+                    className={isLoading ? "animate-spin" : ""}
                   />
-                </div>
-
-                <span className="text-sm font-bold text-slate-800">
-                  {averageProgress}%
-                </span>
-              </div>
+                }
+                onClick={fetchStudyMaterials}
+                disabled={isLoading}
+              >
+                Refresh
+              </Button>
             </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            <StatCard
+              title="Resources"
+              value={total}
+              icon={<FileText size={18} />}
+              accent="emerald"
+            />
+            <StatCard
+              title="Courses"
+              value={uniqueCourses}
+              icon={<BookOpen size={18} />}
+              accent="blue"
+            />
+            <StatCard
+              title="Batches"
+              value={uniqueBatches}
+              icon={<GraduationCap size={18} />}
+              accent="purple"
+            />
+            <StatCard
+              title="Modules"
+              value={uniqueModules}
+              icon={<Layers3 size={18} />}
+              accent="amber"
+            />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        {/* =================================================
-            SUMMARY
-        ================================================= */}
-
-        <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {/* Total */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <FileText size={19} />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">
-                  Total Resources
-                </p>
-
-                <p className="mt-0.5 text-xl font-bold text-slate-900">
-                  {materials.length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Courses */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <BookOpen size={19} />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">
-                  Courses
-                </p>
-
-                <p className="mt-0.5 text-xl font-bold text-slate-900">
-                  4
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Important */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                <Bookmark size={19} />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">
-                  Saved / Important
-                </p>
-
-                <p className="mt-0.5 text-xl font-bold text-slate-900">
-                  {importantMaterials.length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Completed */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-                <CheckCircle2 size={19} />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">
-                  Completed
-                </p>
-
-                <p className="mt-0.5 text-xl font-bold text-slate-900">
-                  {completedMaterials.length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =================================================
-            FEATURED
-        ================================================= */}
-
-        {!hasFilters && (
-          <section>
-            <div className="mb-3 flex items-center gap-2">
-              <Sparkles
-                size={17}
-                className="text-emerald-600"
+      <main className="mx-auto max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        {/* ============ FILTERS ============ */}
+        <section className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
-
-              <h2 className="text-base font-bold text-slate-900">
-                Continue Learning
-              </h2>
-            </div>
-
-            <FeaturedMaterial
-              material={featuredMaterial}
-            />
-          </section>
-        )}
-
-        {/* =================================================
-            MAIN CONTENT
-        ================================================= */}
-
-        <section className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-          {/* =================================================
-              SIDEBAR
-          ================================================= */}
-
-          <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2">
-                <Filter
-                  size={16}
-                  className="text-slate-500"
-                />
-
-                <h3 className="text-sm font-bold text-slate-900">
-                  Browse Materials
-                </h3>
-              </div>
-
-              <div className="mt-4 space-y-1">
-                {materialTypes.map((item) => {
-                  const active = type === item;
-
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => setType(item)}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
-                        active
-                          ? "bg-emerald-50 font-semibold text-emerald-700"
-                          : "text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
-                      <span>{item}</span>
-
-                      {active && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="my-5 border-t border-slate-100" />
-
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Quick Filters
-              </p>
-
-              <div className="mt-2 space-y-1">
-                {/* Recent */}
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search materials, courses, modules..."
+                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100"
+              />
+              {search && (
                 <button
-                  type="button"
-                  onClick={() =>
-                    setActiveTab(
-                      activeTab === "Recent"
-                        ? "All"
-                        : "Recent"
-                    )
-                  }
-                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition ${
-                    activeTab === "Recent"
-                      ? "bg-blue-50 font-semibold text-blue-600"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  <Clock3 size={15} />
-                  Recently Added
-                </button>
-
-                {/* Important */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setImportantOnly(
-                      (value) => !value
-                    )
-                  }
-                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition ${
-                    importantOnly
-                      ? "bg-amber-50 font-semibold text-amber-700"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  <Star
-                    size={15}
-                    fill={
-                      importantOnly
-                        ? "currentColor"
-                        : "none"
-                    }
-                  />
-                  Important
-                </button>
-
-                {/* Completed */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveTab(
-                      activeTab === "Completed"
-                        ? "All"
-                        : "Completed"
-                    )
-                  }
-                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition ${
-                    activeTab === "Completed"
-                      ? "bg-emerald-50 font-semibold text-emerald-700"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  <CheckCircle2 size={15} />
-                  Completed
-                </button>
-              </div>
-            </div>
-          </aside>
-
-          {/* =================================================
-              RIGHT CONTENT
-          ================================================= */}
-
-          <div className="min-w-0 space-y-5">
-            {/* Search + Filters */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="flex flex-col gap-3 xl:flex-row">
-                {/* Search */}
-                <div className="relative flex-1">
-                  <Search
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                  />
-
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) =>
-                      setSearch(e.target.value)
-                    }
-                    placeholder="Search notes, assignments, interview prep..."
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {/* Course */}
-                  <SelectBox
-                    value={course}
-                    onChange={setCourse}
-                    options={courses}
-                    className="min-w-0 sm:w-52"
-                  />
-
-                  {/* Type Mobile */}
-                  <div className="lg:hidden">
-                    <SelectBox
-                      value={type}
-                      onChange={setType}
-                      options={materialTypes}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* Important */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setImportantOnly(
-                        (value) => !value
-                      )
-                    }
-                    className={`h-11 rounded-xl border px-3 text-sm font-semibold transition ${
-                      importantOnly
-                        ? "border-amber-200 bg-amber-50 text-amber-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <Star
-                        size={15}
-                        fill={
-                          importantOnly
-                            ? "currentColor"
-                            : "none"
-                        }
-                      />
-                      Important
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Result Header */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900">
-                  Learning Resources
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  {filteredMaterials.length} resource
-                  {filteredMaterials.length !== 1
-                    ? "s"
-                    : ""}{" "}
-                  available
-                </p>
-              </div>
-
-              {hasFilters && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="inline-flex w-fit items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-700"
+                  onClick={() => setSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  aria-label="Clear search"
                 >
                   <X size={14} />
-                  Clear filters
                 </button>
               )}
             </div>
 
-            {/* Mobile Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
-              {[
-                ["All", "All"],
-                ["Recent", "Recent"],
-                ["Important", "Important"],
-                ["Completed", "Completed"],
-              ].map(([label, value]) => (
-                <button
-                  type="button"
-                  key={value}
-                  onClick={() => setActiveTab(value)}
-                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition ${
-                    activeTab === value
-                      ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
-                      : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Materials */}
-            {filteredMaterials.length > 0 ? (
-              <div className="space-y-3">
-                {filteredMaterials.map((material) => (
-                  <MaterialCard
-                    key={material.id}
-                    material={material}
-                  />
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                clearFilters={clearFilters}
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <SelectBox
+                value={course}
+                onChange={setCourse}
+                options={courseOptions}
+                className="sm:w-52"
               />
-            )}
+              <SelectBox
+                value={type}
+                onChange={setType}
+                options={materialTypeOptions}
+                className="sm:w-44"
+              />
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="md"
+                  icon={<X size={14} />}
+                  onClick={clearFilters}
+                  className="whitespace-nowrap"
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
           </div>
         </section>
 
-        {/* =================================================
-            RECENTLY ADDED
-        ================================================= */}
+        {/* ============ RESULT HEADING ============ */}
+        <SectionHeading
+          count={filteredMaterials.length}
+          hasActiveFilters={hasActiveFilters}
+          onClear={clearFilters}
+        />
 
-        {!hasFilters &&
-          recentMaterials.length > 0 && (
-            <section>
-              <div className="mb-4 flex items-end justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Clock3
-                      size={17}
-                      className="text-blue-600"
-                    />
-
-                    <h2 className="text-lg font-bold text-slate-900">
-                      Recently Added
-                    </h2>
-                  </div>
-
-                  <p className="mt-1 text-sm text-slate-500">
-                    New learning resources added by your
-                    instructors.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveTab("Recent")
-                  }
-                  className="hidden rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 sm:block"
-                >
-                  View all
-                </button>
-              </div>
-
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {recentMaterials
-                  .slice(0, 3)
-                  .map((material) => (
-                    <div
-                      key={material.id}
-                      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-xl ${getTypeStyle(
-                            material.type
-                          )}`}
-                        >
-                          <MaterialIcon
-                            type={material.type}
-                            size={18}
-                          />
-                        </div>
-
-                        <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-600">
-                          NEW
-                        </span>
-                      </div>
-
-                      <h3 className="mt-4 line-clamp-2 text-sm font-bold text-slate-900">
-                        {material.title}
-                      </h3>
-
-                      <p className="mt-1 text-xs text-slate-400">
-                        {material.course}
-                      </p>
-
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className="text-[11px] text-slate-400">
-                          {material.uploadedAt}
-                        </span>
-
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-50 hover:text-emerald-700"
-                        >
-                          Open
-                          <ArrowUpRight size={13} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </section>
-          )}
-
-        {/* =================================================
-            FOOTER INFO
-        ================================================= */}
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <BookOpen size={18} />
-              </div>
-
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Make the most of your study material
-                </h3>
-
-                <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-500">
-                  Read the material before your live class,
-                  complete the related assignments and revisit
-                  important resources during revision.
-                </p>
-              </div>
-            </div>
-
-            <BlobButton
-              variant="secondary"
-              icon={<GraduationCap size={15} />}
-            >
-              Learning Guide
-            </BlobButton>
+        {/* ============ LOADING ============ */}
+        {isLoading && (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CardSkeleton key={i} />
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* ============ ERROR ============ */}
+        {!isLoading && error && (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center">
+            <p className="text-sm font-medium text-rose-600">{error}</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<RefreshCw size={14} />}
+              onClick={fetchStudyMaterials}
+              className="mt-4"
+            >
+              Try Again
+            </Button>
+          </div>
+        )}
+
+        {/* ============ CONTENT ============ */}
+        {!isLoading && !error && (
+          <>
+            {featuredMaterial && (
+              <FeaturedMaterial material={featuredMaterial} />
+            )}
+
+            {listMaterials.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {listMaterials.map((material) => (
+                  <MaterialCard key={material.id} material={material} />
+                ))}
+              </div>
+            ) : (
+              !featuredMaterial && (
+                <EmptyState 
+                  clearFilters={clearFilters} 
+                  onRefresh={fetchStudyMaterials}
+                  isFilterActive={!!hasActiveFilters}
+                />
+              )
+            )}
+          </>
+        )}
       </main>
     </div>
   );

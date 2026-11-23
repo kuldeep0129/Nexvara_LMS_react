@@ -86,12 +86,12 @@ const studentLinks = [
     icon: <CheckSquare size={20} />,
     children: [
       {
-        name: 'Upcoming',
-        path: '/student/assessments/upcoming'
+        name: 'List ',
+        path: '/student/assessments/list'
       },
       {
-        name: 'Available',
-        path: '/student/assessments/available'
+        name: 'Attempt',
+        path: '/student/assessments/attempt'
       },
       {
         name: 'Results',

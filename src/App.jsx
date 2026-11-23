@@ -35,13 +35,14 @@ import ProgressPage from "./dashboard/component/ui/UnderDevelopment.jsx";
 import RewatchLesson from './dashboard/page/student/courses/RewatchLesson.jsx';
 import LiveClass from "./dashboard/page/student/courses/LiveClass.jsx";
 import StudyMaterial from "./dashboard/page/student/courses/StudyMaterial.jsx";
-import UpcommingAssesment from "./dashboard/page/student/assestment/UpcomingAssessment.jsx";
-import AvailableAssessments from "./dashboard/page/student/assestment/Available.jsx";
-import ResultAssessments from "./dashboard/page/student/assestment/ResultAssestment.jsx";
+import AssesmentList from "./dashboard/page/student/assestment/AssessmentList.jsx";
+import AssessmentsAttempt from "./dashboard/page/student/assestment/AssessmentAttempt.jsx";
+import ResultAssessments from "./dashboard/page/student/assestment/AssessmentResults.jsx";
 import StudentAttendance from "./dashboard/page/student/attendance/Attendance.jsx";
 import StudentCertificates from "./dashboard/page/student/certificate/Certificates.jsx";
 import StudentPayments from "./dashboard/page/student/payment/StudentPayment.jsx";
 import ClassroomPage  from "../src/dashboard/page/student/courses/RewatchLesson.jsx";
+import UpcomingLiveClasses from "./dashboard/page/student/LiveClass/UpcomingLiveClasses.jsx";
 
 
 // ==========================================
@@ -82,6 +83,8 @@ import TeacherAssign from './dashboard/page/admin/batch/TeacherAssign.jsx';
 // Profile IMPORTS
 // ==========================================
 import Profile from './dashboard/page/Profile.jsx';
+import AssessmentList from './dashboard/page/student/assestment/AssessmentList.jsx';
+import AssessmentResults from './dashboard/page/student/assestment/AssessmentResults.jsx';
 
 export default function App() {
   return (
@@ -145,13 +148,13 @@ export default function App() {
    <Route path="rewatch/:lessonId"element={<RewatchLesson />} />
     <Route path="/student/live-class/:batchId/:lessonId" element={<LiveClass />} />
       <Route path="/student/materials" element={<StudyMaterial />} />
-        <Route path="/student/assessments/upcoming" element={<UpcommingAssesment />} />
-            <Route path="/student/assessments/available" element={<AvailableAssessments />} />
-                 <Route path="/student/assessments/results" element={<ResultAssessments />} />
+        <Route path="/student/assessments/List" element={<AssessmentList />} />
+            <Route path="/student/assessments/Attempt" element={<ProgressPage />} />
+                 <Route path="/student/assessments/results" element={<AssessmentResults />} />
                       <Route path="/student/attendance" element={<StudentAttendance />} />
                <Route path="/student/certificates" element={<StudentCertificates />} />
              <Route path="/student/payments" element={<StudentPayments />} />
-             
+             <Route path="live/upcoming" element={<UpcomingLiveClasses />} />
 
     <Route path="/student/classroom/:batchId" element={<ClassroomPage />} />
 
