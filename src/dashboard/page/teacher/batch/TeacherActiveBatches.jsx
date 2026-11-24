@@ -346,7 +346,7 @@ function BatchManagementModal({ batch, onClose }) {
             <>
               {activeTab === "Overview" && <OverviewTab summary={summary} basic={basic} nextClass={nextClass} attendance={attendance} materials={materials} onChangeTab={setActiveTab} />}
               {activeTab === "Students" && <StudentsTab attendance={attendance} />}
-              {activeTab === "Attendance" && <AttendanceTab attendance={attendance} />}
+              {activeTab === "Attendance" && <AttendanceTab batchId={batch.id} />}
               {activeTab === "Materials" && <MaterialsTab batchId={batch.id} courseId={getValue(basic, "courseId", "CourseId") || batch.courseId} materials={materials} onUploaded={fetchOverview} />}
               {activeTab === "Modules" && <ModulesTab syllabus={syllabusInformation} />}
               {activeTab === "Schedule" && <ScheduleTab nextClass={nextClass} />}
@@ -365,6 +365,842 @@ function BatchManagementModal({ batch, onClose }) {
     </div>
   );
 }
+
+// ============================================================
+// ATTENDANCE TAB (WITH MARK ATTENDANCE MODAL)
+// ============================================================
+
+function AttendanceTab({ batchId }) {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [showMarkModal, setShowMarkModal] = useState(false);
+
+  const fetchSummary = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await batchService.getBatchAttendanceSummary(batchId);
+      const payload = res?.data ?? res?.Data ?? res;
+      setData(payload);
+    } catch (err) {
+      console.error("Attendance summary error:", err);
+      setError(err.message || "Unable to load attendance data.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [batchId]);
+
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
+
+  const students = useMemo(() => {
+    const list = data?.particularAttendnace ?? data?.ParticularAttendnace ?? [];
+    return list;
+  }, [data]);
+
+  const filteredStudents = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    return students.filter((s) => {
+      const name = String(s.studentName ?? s.StudentName ?? "").toLowerCase();
+      const id = String(s.studentId ?? s.StudentId ?? "").toLowerCase();
+      const matchesSearch = !keyword || name.includes(keyword) || id.includes(keyword);
+
+      const pct = Number(s.averageAttendance ?? s.AverageAttendance ?? 0);
+      let matchesFilter = true;
+      if (filter === "Good") matchesFilter = pct >= 75;
+      if (filter === "Low") matchesFilter = pct > 0 && pct < 75;
+      if (filter === "Zero") matchesFilter = pct === 0;
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [students, search, filter]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[350px] flex-col items-center justify-center">
+        <Loader2 className="mb-3 animate-spin text-blue-600" size={32} />
+        <p className="text-sm font-medium text-slate-500">Loading attendance summary...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+        <AlertCircle size={32} className="text-red-500" />
+        <h3 className="mt-3 font-bold text-slate-800">Unable to load attendance</h3>
+        <p className="mt-1 max-w-md text-sm text-slate-500">{error}</p>
+        <button onClick={fetchSummary} className="mt-4 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const totalStudent = data?.totalStudent ?? data?.TotalStudent ?? 0;
+  const batchAvg = Number(data?.batchAverageAttendance ?? data?.BatchAverageAttendance ?? 0);
+  const presentToday = data?.presentToday ?? data?.PresentToday ?? 0;
+  const absentToday = data?.absentToday ?? data?.AbsentToday ?? 0;
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 className="font-bold text-slate-900">Attendance Overview</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Batch-level attendance summary and per-student breakdown.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowMarkModal(true)}
+            className="inline-flex items-center gap-2 self-start rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+          >
+            <ClipboardCheck size={14} /> Mark Attendance
+          </button>
+          <button onClick={fetchSummary} className="inline-flex items-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+            <RefreshCw size={14} /> Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <StatBox label="Total Students" value={totalStudent} icon={<Users size={18} />} tone="blue" />
+        <StatBox label="Batch Average" value={`${batchAvg.toFixed(1)}%`} icon={<TrendingUp size={18} />} tone="emerald" />
+        <StatBox label="Present Today" value={presentToday} icon={<UserCheck size={18} />} tone="green" />
+        <StatBox label="Absent Today" value={absentToday} icon={<X size={18} />} tone="red" />
+      </div>
+
+      {/* Batch average bar */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-semibold text-slate-700">Batch Attendance Rate</span>
+          <span className="font-bold text-slate-800">{batchAvg.toFixed(1)}%</span>
+        </div>
+        <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all"
+            style={{ width: `${Math.min(Math.max(batchAvg, 0), 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Search + Filter */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:w-72">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search student..."
+            className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-3 text-sm outline-none focus:border-blue-400"
+          />
+        </div>
+        <div className="flex gap-1.5 overflow-x-auto">
+          {["All", "Good", "Low", "Zero"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                filter === f
+                  ? "bg-blue-600 text-white"
+                  : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {f === "All" ? "All Students" : f === "Good" ? "Good (≥75%)" : f === "Low" ? "Low (<75%)" : "Zero"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Student list */}
+      {filteredStudents.length === 0 ? (
+        <EmptyState
+          icon={<UserCheck size={25} />}
+          title="No students found"
+          description="Try changing your search or filter."
+        />
+      ) : (
+        <div className="space-y-3">
+          {filteredStudents.map((s) => {
+            const studentId = s.studentId ?? s.StudentId ?? "";
+            const name = s.studentName ?? s.StudentName ?? "Student";
+            const image = s.studnetProfileImage ?? s.StudentProfileImage ?? s.studnetProfileImage;
+            const present = s.present ?? s.Present ?? 0;
+            const absent = s.absent ?? s.Absent ?? 0;
+            const pct = Number(s.averageAttendance ?? s.AverageAttendance ?? 0);
+
+            return (
+              <StudentAttendanceRow
+                key={studentId}
+                batchId={batchId}
+                studentId={studentId}
+                name={name}
+                image={image}
+                present={present}
+                absent={absent}
+                pct={pct}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Mark Attendance Modal */}
+      {showMarkModal && (
+        <MarkAttendanceModal
+          batchId={batchId}
+          students={students}
+          onClose={() => setShowMarkModal(false)}
+          onSaved={() => {
+            setShowMarkModal(false);
+            fetchSummary();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function StatBox({ label, value, icon, tone }) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-600",
+    emerald: "bg-emerald-50 text-emerald-600",
+    green: "bg-green-50 text-green-600",
+    red: "bg-red-50 text-red-600",
+  };
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+      <div className="flex items-center gap-2">
+        <div className={`rounded-lg p-2 ${tones[tone]}`}>{icon}</div>
+        <span className="text-xs font-medium text-slate-500">{label}</span>
+      </div>
+      <p className="mt-3 text-xl font-bold text-slate-900">{value}</p>
+    </div>
+  );
+}
+
+// ============================================================
+// MARK ATTENDANCE MODAL (BULK)
+// ============================================================
+
+function MarkAttendanceModal({ batchId, students, onClose, onSaved }) {
+  const [sessions, setSessions] = useState([]);
+  const [isFetchingSessions, setIsFetchingSessions] = useState(true);
+  const [sessionsError, setSessionsError] = useState("");
+  const [selectedSessionIds, setSelectedSessionIds] = useState([]);
+
+  const [search, setSearch] = useState("");
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [studentStatus, setStudentStatus] = useState({});
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setIsFetchingSessions(true);
+      setSessionsError("");
+      try {
+        const res = await batchService.getTeacherBatchClassSessions(batchId, 1, 100);
+        const payload = res?.data ?? res?.Data ?? res;
+        const items = payload?.items ?? payload?.Items ?? (Array.isArray(payload) ? payload : []);
+        if (mounted) setSessions(Array.isArray(items) ? items : []);
+      } catch (err) {
+        if (mounted) setSessionsError(err.message || "Failed to load sessions.");
+      } finally {
+        if (mounted) setIsFetchingSessions(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [batchId]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  const filteredStudents = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    if (!keyword) return students;
+    return students.filter((s) => {
+      const name = String(s.studentName ?? s.StudentName ?? "").toLowerCase();
+      const id = String(s.studentId ?? s.StudentId ?? "").toLowerCase();
+      return name.includes(keyword) || id.includes(keyword);
+    });
+  }, [students, search]);
+
+  const toggleSession = (id) => {
+    setSelectedSessionIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleStudent = (id) => {
+    setSelectedStudentIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+    setStudentStatus((prev) => {
+      if (prev[id]) return prev;
+      return { ...prev, [id]: { status: "Present", remarks: "" } };
+    });
+  };
+
+  const selectAllStudents = () => {
+    const ids = filteredStudents.map((s) => s.studentId ?? s.StudentId);
+    setSelectedStudentIds(ids);
+    const next = { ...studentStatus };
+    ids.forEach((id) => {
+      if (!next[id]) next[id] = { status: "Present", remarks: "" };
+    });
+    setStudentStatus(next);
+  };
+
+  const clearAllStudents = () => {
+    setSelectedStudentIds([]);
+  };
+
+  const updateStudentStatus = (studentId, status) => {
+    setStudentStatus((prev) => ({
+      ...prev,
+      [studentId]: { ...(prev[studentId] || {}), status },
+    }));
+  };
+
+  const updateStudentRemarks = (studentId, remarks) => {
+    setStudentStatus((prev) => ({
+      ...prev,
+      [studentId]: { ...(prev[studentId] || { status: "Present" }), remarks },
+    }));
+  };
+
+  const totalRecords = selectedSessionIds.length * selectedStudentIds.length;
+  const canSave = selectedSessionIds.length > 0 && selectedStudentIds.length > 0 && !isSaving;
+
+  const handleSave = async () => {
+    if (!canSave) return;
+    setIsSaving(true);
+    setSaveError("");
+    try {
+      const records = [];
+      selectedSessionIds.forEach((sessionId) => {
+        selectedStudentIds.forEach((studentId) => {
+          const entry = studentStatus[studentId] || { status: "Present", remarks: "" };
+          records.push({
+            studentId,
+            batchClassSessionId: sessionId,
+            status: entry.status,
+            remarks: entry.remarks?.trim() || null,
+          });
+        });
+      });
+      await batchService.createStudentAttendance({ attendanceRecords: records });
+      onSaved();
+    } catch (err) {
+      setSaveError(err.message || "Failed to save attendance.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-sm sm:p-4">
+      <div className="flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+        {/* Header */}
+        <div className="flex items-start justify-between border-b border-slate-100 p-4 sm:p-5">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Mark Attendance</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              Select sessions and students. Default status is Present.
+            </p>
+          </div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
+          {/* STEP 1: SESSIONS */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                1. Sessions {selectedSessionIds.length > 0 && `(${selectedSessionIds.length} selected)`}
+              </p>
+              {sessions.length > 0 && (
+                <button
+                  onClick={() =>
+                    setSelectedSessionIds(
+                      selectedSessionIds.length === sessions.length
+                        ? []
+                        : sessions.map((s) => s.batchClassSessionId ?? s.BatchClassSessionId)
+                    )
+                  }
+                  className="text-[11px] font-semibold text-blue-600 hover:underline"
+                >
+                  {selectedSessionIds.length === sessions.length ? "Clear all" : "Select all"}
+                </button>
+              )}
+            </div>
+
+            {isFetchingSessions && (
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <Loader2 size={15} className="animate-spin" /> Loading sessions...
+              </div>
+            )}
+            {sessionsError && <p className="text-xs font-medium text-red-600">{sessionsError}</p>}
+            {!isFetchingSessions && !sessionsError && sessions.length === 0 && (
+              <p className="text-xs text-slate-400">No sessions available.</p>
+            )}
+
+            {sessions.length > 0 && (
+              <div className="grid gap-2 sm:grid-cols-2">
+                {sessions.map((s) => {
+                  const id = s.batchClassSessionId ?? s.BatchClassSessionId;
+                  const selected = selectedSessionIds.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => toggleSession(id)}
+                      className={`flex items-start justify-between gap-2 rounded-xl border p-3 text-left transition ${
+                        selected
+                          ? "border-blue-300 bg-blue-50"
+                          : "border-slate-200 bg-white hover:border-blue-200"
+                      }`}
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-slate-800">
+                          {formatDate(s.sessionDate ?? s.SessionDate)}
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          {formatTime(s.startTime ?? s.StartTime)} – {formatTime(s.endTime ?? s.EndTime)}
+                        </p>
+                      </div>
+                      <div className={`mt-0.5 flex h-4 w-4 items-center justify-center rounded border ${selected ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white"}`}>
+                        {selected && <CheckCircle2 size={11} />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* STEP 2: STUDENTS */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                2. Students {selectedStudentIds.length > 0 && `(${selectedStudentIds.length} selected)`}
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={selectAllStudents} className="text-[11px] font-semibold text-blue-600 hover:underline">
+                  Select all
+                </button>
+                <span className="text-slate-300">|</span>
+                <button onClick={clearAllStudents} className="text-[11px] font-semibold text-slate-500 hover:underline">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div className="relative mb-3">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search student..."
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-xs outline-none focus:border-blue-400"
+              />
+            </div>
+
+            {filteredStudents.length === 0 ? (
+              <p className="text-xs text-slate-400">No students found.</p>
+            ) : (
+              <div className="space-y-2">
+                {filteredStudents.map((s) => {
+                  const id = s.studentId ?? s.StudentId;
+                  const name = s.studentName ?? s.StudentName ?? "Student";
+                  const image = s.studnetProfileImage ?? s.StudentProfileImage;
+                  const selected = selectedStudentIds.includes(id);
+                  const entry = studentStatus[id] || { status: "Present", remarks: "" };
+
+                  return (
+                    <div
+                      key={id}
+                      className={`rounded-xl border p-3 transition ${
+                        selected ? "border-blue-300 bg-blue-50/50" : "border-slate-200 bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleStudent(id)}
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${selected ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white"}`}
+                        >
+                          {selected && <CheckCircle2 size={13} />}
+                        </button>
+                        {image ? (
+                          <img src={image} alt={name} className="h-8 w-8 rounded-full object-cover" />
+                        ) : (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-[11px] font-bold text-blue-600">
+                            {name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <p className="flex-1 truncate text-sm font-semibold text-slate-800">{name}</p>
+
+                        {selected && (
+                          <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => updateStudentStatus(id, "Present")}
+                              className={`px-2.5 py-1 text-[11px] font-semibold ${
+                                entry.status === "Present"
+                                  ? "bg-emerald-600 text-white"
+                                  : "bg-white text-slate-600 hover:bg-emerald-50"
+                              }`}
+                            >
+                              Present
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => updateStudentStatus(id, "Absent")}
+                              className={`px-2.5 py-1 text-[11px] font-semibold border-l border-slate-200 ${
+                                entry.status === "Absent"
+                                  ? "bg-red-600 text-white"
+                                  : "bg-white text-slate-600 hover:bg-red-50"
+                              }`}
+                            >
+                              Absent
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {selected && (
+                        <div className="mt-2 pl-8">
+                          <input
+                            type="text"
+                            value={entry.remarks}
+                            onChange={(e) => updateStudentRemarks(id, e.target.value)}
+                            placeholder="Remarks (optional)"
+                            maxLength={200}
+                            className="h-8 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs outline-none focus:border-blue-400"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {saveError && (
+            <p className="flex items-center gap-2 text-xs font-medium text-red-600">
+              <AlertCircle size={14} /> {saveError}
+            </p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-slate-100 p-3 sm:p-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[11px] text-slate-500">
+              {selectedSessionIds.length} session(s) × {selectedStudentIds.length} student(s) ={" "}
+              <span className="font-bold text-slate-800">{totalRecords} record(s)</span>
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={onClose}
+                disabled={isSaving}
+                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!canSave}
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isSaving ? (
+                  <><Loader2 size={15} className="animate-spin" /> Saving...</>
+                ) : (
+                  <><CheckCircle2 size={15} /> Save Attendance</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// STUDENT ROW + SESSION EDITOR
+// ============================================================
+
+function StudentAttendanceRow({ batchId, studentId, name, image, present, absent, pct }) {
+  const [expanded, setExpanded] = useState(false);
+  const [detail, setDetail] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [detailError, setDetailError] = useState("");
+  const [savingSessionId, setSavingSessionId] = useState(null);
+  const [rowSuccess, setRowSuccess] = useState("");
+
+  const fetchDetail = useCallback(async () => {
+    if (detail) return;
+    setIsFetching(true);
+    setDetailError("");
+    try {
+      const res = await batchService.getParticularStudentAttendanceSummary(batchId, studentId);
+      const payload = res?.data ?? res?.Data ?? res;
+      setDetail(payload);
+    } catch (err) {
+      setDetailError(err.message || "Failed to load student attendance.");
+    } finally {
+      setIsFetching(false);
+    }
+  }, [batchId, studentId, detail]);
+
+  const handleToggle = () => {
+    setExpanded((v) => !v);
+    if (!expanded) fetchDetail();
+  };
+
+  const handleSaveAttendance = async (session, status, remarks) => {
+    setSavingSessionId(session.sessionId);
+    setDetailError("");
+    setRowSuccess("");
+    try {
+      await batchService.createStudentAttendance({
+        attendanceRecords: [
+          {
+            studentId,
+            batchClassSessionId: session.sessionId,
+            status,
+            remarks: remarks || null,
+          },
+        ],
+      });
+      setDetail((prev) => {
+        if (!prev?.summary) return prev;
+        return {
+          ...prev,
+          summary: prev.summary.map((s) =>
+            s.sessionId === session.sessionId
+              ? { ...s, status, remarks: remarks || null, markedAt: new Date().toISOString(), attendanceId: s.attendanceId || 1 }
+              : s
+          ),
+        };
+      });
+      setRowSuccess(`Attendance saved for ${formatDate(session.sessionDate)}`);
+    } catch (err) {
+      setDetailError(err.message || "Failed to save attendance.");
+    } finally {
+      setSavingSessionId(null);
+    }
+  };
+
+  const barColor =
+    pct >= 75 ? "bg-emerald-500" :
+    pct >= 40 ? "bg-amber-500" :
+    pct > 0 ? "bg-red-500" : "bg-slate-300";
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <button
+        onClick={handleToggle}
+        className="flex w-full flex-col gap-3 p-4 text-left sm:flex-row sm:items-center sm:justify-between hover:bg-slate-50/70"
+      >
+        <div className="flex items-center gap-3">
+          {image ? (
+            <img src={image} alt={name} className="h-10 w-10 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600">
+              {name.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <p className="text-sm font-bold text-slate-800">{name}</p>
+            <p className="text-[11px] text-slate-400">
+              Present <span className="text-emerald-600 font-semibold">{present}</span> · Absent{" "}
+              <span className="text-red-500 font-semibold">{absent}</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="w-32 sm:w-40">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(Math.max(pct, 0), 100)}%` }} />
+            </div>
+          </div>
+          <span className="w-14 text-right text-sm font-bold text-slate-800">{pct.toFixed(1)}%</span>
+          <span className={`text-slate-400 transition-transform ${expanded ? "rotate-180" : ""}`}>▾</span>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-slate-100 bg-slate-50/70 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Session History</p>
+            {rowSuccess && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                <CheckCircle2 size={13} /> {rowSuccess}
+              </span>
+            )}
+          </div>
+
+          {isFetching && (
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <Loader2 size={15} className="animate-spin" /> Loading sessions...
+            </div>
+          )}
+          {detailError && <p className="text-xs font-medium text-red-600">{detailError}</p>}
+
+          {detail && (
+            <>
+              <div className="mb-3 flex flex-wrap gap-2 text-[11px] font-semibold">
+                <span className="rounded-md bg-white px-2 py-1 text-slate-600 border border-slate-200">
+                  Total: {detail.totalClasses}
+                </span>
+                <span className="rounded-md bg-emerald-50 px-2 py-1 text-emerald-700 border border-emerald-200">
+                  Present: {detail.present}
+                </span>
+                <span className="rounded-md bg-red-50 px-2 py-1 text-red-700 border border-red-200">
+                  Absent: {detail.absent}
+                </span>
+                <span className="rounded-md bg-slate-100 px-2 py-1 text-slate-600 border border-slate-200">
+                  Not Marked: {detail.notMarked}
+                </span>
+              </div>
+
+              {detail.summary?.length ? (
+                <div className="space-y-2">
+                  {detail.summary.map((session) => (
+                    <SessionAttendanceEditor
+                      key={session.sessionId}
+                      session={session}
+                      isSaving={savingSessionId === session.sessionId}
+                      onSave={(status, remarks) => handleSaveAttendance(session, status, remarks)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400">No session history available.</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SessionAttendanceEditor({ session, isSaving, onSave }) {
+  const [status, setStatus] = useState(session.status || "Not Marked");
+  const [remarks, setRemarks] = useState(session.remarks || "");
+
+  useEffect(() => {
+    setStatus(session.status || "Not Marked");
+    setRemarks(session.remarks || "");
+  }, [session.sessionId, session.status, session.remarks]);
+
+  const isNotMarked = status === "Not Marked";
+
+  const statusBadgeClass =
+    status === "Present"
+      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+      : status === "Absent"
+      ? "bg-red-50 text-red-700 border-red-200"
+      : "bg-slate-100 text-slate-600 border-slate-200";
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-slate-700">
+            {formatDate(session.sessionDate)}
+          </p>
+          <p className="text-xs text-slate-400">
+            {formatTime(session.startTime)} – {formatTime(session.endTime)}
+          </p>
+        </div>
+        <span className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-bold ${statusBadgeClass}`}>
+          {status}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden">
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => setStatus("Present")}
+            className={`px-3 py-1.5 text-xs font-semibold transition ${
+              status === "Present"
+                ? "bg-emerald-600 text-white"
+                : "bg-white text-slate-600 hover:bg-emerald-50"
+            } disabled:opacity-50`}
+          >
+            Present
+          </button>
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => setStatus("Absent")}
+            className={`px-3 py-1.5 text-xs font-semibold transition border-l border-slate-200 ${
+              status === "Absent"
+                ? "bg-red-600 text-white"
+                : "bg-white text-slate-600 hover:bg-red-50"
+            } disabled:opacity-50`}
+          >
+            Absent
+          </button>
+        </div>
+
+        <input
+          type="text"
+          value={remarks}
+          onChange={(e) => setRemarks(e.target.value)}
+          placeholder="Remarks (optional)"
+          maxLength={200}
+          disabled={isSaving}
+          className="h-9 w-full flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-400 focus:bg-white disabled:opacity-50"
+        />
+
+        <button
+          type="button"
+          disabled={isSaving || isNotMarked}
+          onClick={() => onSave(status, remarks.trim())}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSaving ? (
+            <><Loader2 size={13} className="animate-spin" /> Saving...</>
+          ) : (
+            <><CheckCircle2 size={13} /> Save</>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// OTHER TABS
+// ============================================================
 
 function OverviewTab({ summary, basic, nextClass, attendance, materials, onChangeTab }) {
   const totalStudents = getValue(summary, "totalStudents", "TotalStudents", 0);
@@ -694,72 +1530,6 @@ function StudentsTab({ attendance }) {
   );
 }
 
-function AttendanceTab({ attendance }) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="font-bold text-slate-900">Attendance Overview</h3>
-        <p className="mt-1 text-xs text-slate-500">Student-wise attendance and class session history</p>
-      </div>
-      {attendance.length === 0 ? (
-        <EmptyState icon={<UserCheck size={25} />} title="No attendance records" description="Attendance records will appear here when available." />
-      ) : (
-        <div className="space-y-3">
-          {attendance.map((student) => {
-            const id = getValue(student, "studentId", "StudentId", "");
-            const name = getValue(student, "studentName", "StudentName", "Student");
-            const percentage = getValue(student, "attendancePercentage", "AttendancePercentage", 0);
-            const sessions = getValue(student, "sessions", "Sessions", []);
-            return (
-              <div key={id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="font-bold text-slate-800">{name}</p>
-                    <p className="mt-1 text-xs text-slate-400">{getValue(student, "totalClasses", "TotalClasses", 0)} total classes</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="h-2 w-28 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(Math.max(percentage, 0), 100)}%` }} />
-                    </div>
-                    <span className="text-sm font-bold text-slate-800">{Number(percentage).toFixed(1)}%</span>
-                  </div>
-                </div>
-                <div className="border-t border-slate-100 bg-slate-50/70 p-4">
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Session History</p>
-                  {sessions.length === 0 ? (
-                    <p className="text-xs text-slate-400">No session history available.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {sessions.map((session) => {
-                        const sessionId = getValue(session, "sessionId", "SessionId");
-                        const status = getValue(session, "attendanceStatus", "AttendanceStatus", "Unknown");
-                        return (
-                          <div key={sessionId} className="flex flex-col gap-2 rounded-xl border border-slate-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                              <p className="text-sm font-semibold text-slate-700">{formatDate(getValue(session, "scheduleDate", "ScheduleDate"))}</p>
-                              <p className="mt-1 text-xs text-slate-400">{getValue(session, "totalMinutes", "TotalMinutes", 0)} minutes attended</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-slate-400">
-                                {getValue(session, "firstJoinTime", "FirstJoinTime") ? formatTime(getValue(session, "firstJoinTime", "FirstJoinTime")) : "No join time"}
-                              </span>
-                              <AttendanceBadge status={status} />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function AttendanceBadge({ status }) {
   const normalized = String(status).toLowerCase();
   const classes =
@@ -819,7 +1589,7 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
       formData.append("BatchId", parseInt(batchId, 10) || 0);
       formData.append("ModuleId", moduleId ? parseInt(moduleId, 10) : 0);
       formData.append("Title", title.trim());
-      formData.append("FileUrl", file); 
+      formData.append("FileUrl", file);
 
       await batchService.createCourseMaterial(formData);
 
@@ -836,9 +1606,9 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
   const handleToggleStatus = async (id) => {
     try {
       setTogglingId(id);
-      await batchService.updateCourseMaterialStatus(id); 
+      await batchService.updateCourseMaterialStatus(id);
       setSuccess("Material status updated successfully.");
-      await onUploaded(); 
+      await onUploaded();
     } catch (err) {
       setError(err.message || "Failed to update status.");
     } finally {
@@ -851,14 +1621,11 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
     setIsFetchingEdit(true);
     setError("");
     setEditFile(null);
-    
     try {
       const res = await batchService.getCourseMaterialById(material.id);
       const data = getPayload(res);
-      
       setEditTitle(data.name || data.title || "");
       setEditModuleId(data.moduleId || "");
-      
     } catch (err) {
       setError(err.message || "Failed to fetch material details.");
     } finally {
@@ -869,30 +1636,21 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
   const handleUpdateMaterial = async (e) => {
     e.preventDefault();
     if (!editTitle.trim()) return;
-
     setIsUpdating(true);
     setError("");
-
     try {
       const formData = new FormData();
       formData.append("Id", parseInt(editingMaterial.id, 10));
       formData.append("CourseId", parseInt(courseId, 10) || 0);
       formData.append("BatchId", parseInt(batchId, 10) || 0);
       formData.append("Title", editTitle.trim());
-      
-      if (editModuleId) {
-        formData.append("ModuleId", parseInt(editModuleId, 10));
-      }
-      
-      if (editFile) {
-        formData.append("FileUrl", editFile); 
-      }
+      if (editModuleId) formData.append("ModuleId", parseInt(editModuleId, 10));
+      if (editFile) formData.append("FileUrl", editFile);
 
       await batchService.updateCourseMaterial(formData);
-
       setEditingMaterial(null);
       setSuccess("Material updated successfully.");
-      await onUploaded(); 
+      await onUploaded();
     } catch (err) {
       setError(err.message || "Failed to update material.");
     } finally {
@@ -921,13 +1679,11 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
             <h4 className="font-bold text-slate-900">Upload New Material</h4>
             <p className="mt-1 text-xs text-slate-500">Provide details and attach the file.</p>
           </div>
-          
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <label className="mb-1.5 block text-xs font-semibold text-slate-700">Material Title *</label>
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. ASP.NET Core Notes" maxLength={150} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-400" />
             </div>
-
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-slate-700">Select Module</label>
               <select value={moduleId} onChange={(e) => setModuleId(e.target.value)} disabled={isFetchingModules} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-400 disabled:opacity-50">
@@ -935,16 +1691,13 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
                 {modules.map((mod) => <option key={mod.id || mod.Id} value={mod.id || mod.Id}>{mod.title || mod.Title}</option>)}
               </select>
             </div>
-
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-slate-700">Attach File *</label>
               <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-200 border border-slate-200 rounded-xl bg-white" />
               {file && <p className="mt-1 text-[11px] text-emerald-600">Selected: {file.name}</p>}
             </div>
           </div>
-
           {error && <p className="mt-3 flex items-center gap-2 text-xs font-medium text-red-600"><AlertCircle size={15} /> {error}</p>}
-          
           <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <button type="button" onClick={() => setShowUpload(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
             <button type="submit" disabled={uploading} className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
@@ -965,24 +1718,19 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
             const fileType = getValue(material, "fileType", "FileType", "File");
             const materialUrl = getValue(material, "fileUrl", "FileUrl", "");
             const fileSize = getValue(material, "fileSize", "FileSize", 0);
-            
-            const isActive = material.isActive === true; 
+            const isActive = material.isActive === true;
             const isToggling = togglingId === id;
-
             const isImage = String(fileType).toLowerCase().includes("image") || String(materialUrl).toLowerCase().match(/\.(jpeg|jpg|gif|png|webp)$/);
             const isPdfOrDoc = String(fileType).toLowerCase().includes("pdf") || String(materialUrl).toLowerCase().match(/\.(pdf|doc|docx|ppt|pptx|xls|xlsx)$/);
 
             return (
               <div key={id} className={`group relative flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-md ${isToggling ? 'opacity-50 pointer-events-none' : ''}`}>
-                
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                   <MaterialIcon fileType={fileType} />
                 </div>
-
-                <div className="min-w-0 flex-1 pr-24"> 
+                <div className="min-w-0 flex-1 pr-24">
                   <p className="truncate text-sm font-bold text-slate-800">{name}</p>
                   <p className="mt-1 truncate text-xs text-slate-400">{moduleName || fileType} {fileSize > 0 ? `· ${formatFileSize(fileSize)}` : ""}</p>
-                  
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-300'}`}></span>
                     <span className={`text-[10px] font-bold uppercase ${isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
@@ -990,7 +1738,6 @@ function MaterialsTab({ batchId, materials, onUploaded, courseId }) {
                     </span>
                   </div>
                 </div>
-
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm p-1 rounded-xl shadow-sm border border-slate-100">
                   {materialUrl && (
                     isImage ? (
@@ -1107,9 +1854,6 @@ function InfoCard({ icon, label, value }) {
   );
 }
 
-{/* ============================================================
-   CLASSES TAB (Full Class Management API Connected)
-============================================================ */}
 function ClassesTab({ batchId, courseId, syllabus, nextClass }) {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -1142,7 +1886,6 @@ function ClassesTab({ batchId, courseId, syllabus, nextClass }) {
     fetchClasses();
   }, [fetchClasses]);
 
-  // DELETE (uses update-status API)
   const handleDelete = async (id) => {
     try {
       setDeletingId(id);
@@ -1368,9 +2111,6 @@ function ClassesTab({ batchId, courseId, syllabus, nextClass }) {
   );
 }
 
-{/* ============================================================
-   CLASS FORM MODAL (Create + Edit) - API Connected
-============================================================ */}
 function ClassFormModal({ batchId, courseId, syllabus, editingClass, onClose, onSaved }) {
   const isEdit = Boolean(editingClass);
 
@@ -1396,7 +2136,7 @@ function ClassFormModal({ batchId, courseId, syllabus, editingClass, onClose, on
     const provider = getValue(editingClass, "videoProvider", "VideoProvider", "");
     const videoId = getValue(editingClass, "videoId", "VideoId");
     const existingUrl = getValue(editingClass, "videoUrl", "VideoUrl");
-    
+
     if (provider === "YouTube" && videoId) {
       setYoutubeUrl(`https://www.youtube.com/watch?v=${videoId}`);
     } else if (existingUrl) {
@@ -1436,7 +2176,7 @@ function ClassFormModal({ batchId, courseId, syllabus, editingClass, onClose, on
       } else {
         await batchService.createCourseVideo(fd);
       }
-      
+
       await onSaved();
     } catch (err) {
       setError(err.message || "Failed to save class.");

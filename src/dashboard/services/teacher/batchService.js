@@ -384,4 +384,62 @@ getStudentCourseVideos: async (batchId) => {
     return readResponse(response, "Failed to end video session.");
   },
 
+   getBatchAttendanceSummary: async (batchId) => {
+    if (!batchId) throw new Error("Batch ID is required.");
+
+    const response = await fetch(
+      `${API_BASE}/Teacher/Get-List-AttendanceSummery/${batchId}/teacher`,
+      { method: "GET", headers: getHeaders() }
+    );
+
+    return readResponse(response, "Failed to fetch batch attendance summary.");
+  },
+
+  // 2. Particular student attendance detail (drill-down)
+  getParticularStudentAttendanceSummary: async (batchId, studentId) => {
+    if (!batchId) throw new Error("Batch ID is required.");
+    if (!studentId) throw new Error("Student ID is required.");
+
+    const response = await fetch(
+      `${API_BASE}/Teacher/Get-List-Particular-Student/${studentId}/AttendanceSummary/${batchId}`,
+      { method: "GET", headers: getHeaders() }
+    );
+
+    return readResponse(response, "Failed to fetch student attendance summary.");
+  },
+
+   createStudentAttendance: async (payload) => {
+    if (!payload?.attendanceRecords?.length) {
+      throw new Error("At least one attendance record is required.");
+    }
+
+    const response = await fetch(`${API_BASE}/Teacher/Create-Student-Attendance`, {
+      method: "POST",
+      headers: {
+        ...getHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return readResponse(response, "Failed to mark attendance.");
+  },
+
+    // Get teacher's batch class sessions (for attendance marking)
+  getTeacherBatchClassSessions: async (batchId, pageNumber = 1, pageSize = 100) => {
+    if (!batchId) throw new Error("Batch ID is required.");
+
+    const params = new URLSearchParams({
+      batchId: String(batchId),
+      pageNumber: String(pageNumber),
+      pageSize: String(pageSize),
+    });
+
+    const response = await fetch(
+      `${API_BASE}/Teacher/Get-List-BatchClassSession?${params}`,
+      { method: "GET", headers: getHeaders() }
+    );
+
+    return readResponse(response, "Failed to fetch batch class sessions.");
+  },
 };
